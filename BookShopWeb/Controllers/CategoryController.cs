@@ -1,4 +1,5 @@
 ﻿using BookShopWeb.Data;
+using BookShopWeb.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookShopWeb.Controllers
@@ -21,6 +22,14 @@ namespace BookShopWeb.Controllers
         public IActionResult Create()
         {
             return View();
+        }
+
+        [HttpPost]
+        public IActionResult Create(Category category)
+        {
+            _dbContext.Categories.Add(category);
+            _dbContext.SaveChanges();
+            return RedirectToAction(nameof(Index));
         }
     }
 }
