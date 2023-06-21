@@ -27,6 +27,11 @@ namespace BookShopWeb.Controllers
         [HttpPost]
         public IActionResult Create(Category category)
         {
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+
             _dbContext.Categories.Add(category);
             _dbContext.SaveChanges();
             return RedirectToAction(nameof(Index));
