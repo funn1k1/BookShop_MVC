@@ -32,6 +32,12 @@ namespace BookShopWeb.Controllers
                 return View();
             }
 
+            if (category.Name == category.DisplayOrder.ToString())
+            {
+                ModelState.AddModelError(string.Empty, "DisplayOrder cannot match Name");
+                return View();
+            }
+
             _dbContext.Categories.Add(category);
             _dbContext.SaveChanges();
             return RedirectToAction(nameof(Index));
