@@ -71,5 +71,36 @@ namespace BookShopWeb.Controllers
             _dbContext.SaveChanges();
             return RedirectToAction(nameof(Index));
         }
+
+        public IActionResult Delete(int? id)
+        {
+            if (id is null || id == 0)
+            {
+                return NotFound();
+            }
+
+            var category = _dbContext.Categories.Find(id);
+            if (category is null)
+            {
+                return NotFound();
+            }
+
+            return View(category);
+        }
+
+        [HttpPost]
+        [ActionName(nameof(Delete))]
+        public IActionResult DeletePOST(int? id)
+        {
+            var category = _dbContext.Categories.Find(id);
+            if (category == null)
+            {
+                return NotFound();
+            }
+
+            _dbContext.Categories.Remove(category);
+            _dbContext.SaveChanges();
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
