@@ -42,5 +42,27 @@ namespace BookShopWeb.Controllers
             _dbContext.SaveChanges();
             return RedirectToAction(nameof(Index));
         }
+
+        public IActionResult Edit(int? id)
+        {
+            if (id is null || id == 0)
+            {
+                return NotFound();
+            }
+
+            var category = _dbContext.Categories.Find(id);
+            if (category is null)
+            {
+                return NotFound();
+            }
+
+            return View(category);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(Category category)
+        {
+            return View();
+        }
     }
 }
