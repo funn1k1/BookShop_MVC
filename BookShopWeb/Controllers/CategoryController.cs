@@ -46,7 +46,7 @@ namespace BookShopWeb.Controllers
 
         public IActionResult Edit(int? id)
         {
-            if (id is null || id == 0)
+            if (id == null)
             {
                 return NotFound();
             }
