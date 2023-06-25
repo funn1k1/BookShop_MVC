@@ -1,4 +1,4 @@
-﻿using BookShopWeb.DataAccess.Data;
+﻿using BookShopWeb.DataAccess.Repository.IRepository;
 using BookShopWeb.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,16 +6,16 @@ namespace BookShopWeb.Controllers
 {
     public class CategoryController : Controller
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly ICategoryRepository _categoryRepo;
 
-        public CategoryController(ApplicationDbContext dbContext)
+        public CategoryController(ICategoryRepository categoryRepo)
         {
-            _dbContext = dbContext;
+            _categoryRepo = categoryRepo;
         }
 
         public IActionResult Index()
         {
-            var categories = _dbContext.Categories.ToList();
+            var categories = _categoryRepo.GetAll();
             return View(categories);
         }
 
@@ -38,8 +38,8 @@ namespace BookShopWeb.Controllers
                 return View();
             }
 
-            _dbContext.Categories.Add(category);
-            _dbContext.SaveChanges();
+            _categoryRepo.Add(category);
+            _categoryRepo.Save();
             TempData["Success"] = "Category was created successfully";
             return RedirectToAction(nameof(Index));
         }
@@ -51,7 +51,7 @@ namespace BookShopWeb.Controllers
                 return NotFound();
             }
 
-            var category = _dbContext.Categories.Find(id);
+            var category = _categoryRepo.Get(c => c.Id == id);
             if (category is null)
             {
                 return NotFound();
@@ -68,20 +68,20 @@ namespace BookShopWeb.Controllers
                 return View();
             }
 
-            _dbContext.Categories.Update(category);
-            _dbContext.SaveChanges();
+            _categoryRepo.Update(category);
+            _categoryRepo.Save();
             TempData["Success"] = "Category was edited successfully";
             return RedirectToAction(nameof(Index));
         }
 
         public IActionResult Delete(int? id)
         {
-            if (id is null || id == 0)
+            if (id is null)
             {
                 return NotFound();
             }
 
-            var category = _dbContext.Categories.Find(id);
+            var category = _categoryRepo.Get(c => c.Id == id);
             if (category is null)
             {
                 return NotFound();
@@ -94,14 +94,19 @@ namespace BookShopWeb.Controllers
         [ActionName(nameof(Delete))]
         public IActionResult DeletePOST(int? id)
         {
-            var category = _dbContext.Categories.Find(id);
+            if (id is null)
+            {
+                return NotFound();
+            }
+
+            var category = _categoryRepo.Get(c => c.Id == id);
             if (category == null)
             {
                 return NotFound();
             }
 
-            _dbContext.Categories.Remove(category);
-            _dbContext.SaveChanges();
+            _categoryRepo.Remove(category);
+            _categoryRepo.Save();
             TempData["Success"] = "Category was deleted successfully";
             return RedirectToAction(nameof(Index));
         }
