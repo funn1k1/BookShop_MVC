@@ -7,13 +7,13 @@ namespace BookShopWeb.DataAccess.Repository
 {
     public class Repository<T> : IRepository<T> where T : class
     {
-        private readonly ApplicationDbContext _dbContext;
+        protected readonly ApplicationDbContext _db;
         private readonly DbSet<T> _dbSet;
 
-        public Repository(ApplicationDbContext dbContext)
+        public Repository(ApplicationDbContext db)
         {
-            _dbContext = dbContext;
-            _dbSet = _dbContext.Set<T>();
+            _db = db;
+            _dbSet = db.Set<T>();
         }
 
         public void Add(T entity) => _dbSet.Add(entity);
