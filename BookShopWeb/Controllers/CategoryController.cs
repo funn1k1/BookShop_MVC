@@ -6,16 +6,16 @@ namespace BookShopWeb.Controllers
 {
     public class CategoryController : Controller
     {
-        private readonly ICategoryRepository _categoryRepo;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CategoryController(ICategoryRepository categoryRepo)
+        public CategoryController(IUnitOfWork unitOfWork)
         {
-            _categoryRepo = categoryRepo;
+            _unitOfWork = unitOfWork;
         }
 
         public IActionResult Index()
         {
-            var categories = _categoryRepo.GetAll();
+            var categories = _unitOfWork.Categories.GetAll();
             return View(categories);
         }
 
@@ -38,8 +38,8 @@ namespace BookShopWeb.Controllers
                 return View();
             }
 
-            _categoryRepo.Add(category);
-            _categoryRepo.Save();
+            _unitOfWork.Categories.Add(category);
+            _unitOfWork.Save();
             TempData["Success"] = "Category was created successfully";
             return RedirectToAction(nameof(Index));
         }
@@ -51,7 +51,7 @@ namespace BookShopWeb.Controllers
                 return NotFound();
             }
 
-            var category = _categoryRepo.Get(c => c.Id == id);
+            var category = _unitOfWork.Categories.Get(c => c.Id == id);
             if (category is null)
             {
                 return NotFound();
@@ -68,8 +68,8 @@ namespace BookShopWeb.Controllers
                 return View();
             }
 
-            _categoryRepo.Update(category);
-            _categoryRepo.Save();
+            _unitOfWork.Categories.Update(category);
+            _unitOfWork.Save();
             TempData["Success"] = "Category was edited successfully";
             return RedirectToAction(nameof(Index));
         }
@@ -81,7 +81,7 @@ namespace BookShopWeb.Controllers
                 return NotFound();
             }
 
-            var category = _categoryRepo.Get(c => c.Id == id);
+            var category = _unitOfWork.Categories.Get(c => c.Id == id);
             if (category is null)
             {
                 return NotFound();
@@ -99,14 +99,14 @@ namespace BookShopWeb.Controllers
                 return NotFound();
             }
 
-            var category = _categoryRepo.Get(c => c.Id == id);
+            var category = _unitOfWork.Categories.Get(c => c.Id == id);
             if (category == null)
             {
                 return NotFound();
             }
 
-            _categoryRepo.Remove(category);
-            _categoryRepo.Save();
+            _unitOfWork.Categories.Remove(category);
+            _unitOfWork.Save();
             TempData["Success"] = "Category was deleted successfully";
             return RedirectToAction(nameof(Index));
         }
