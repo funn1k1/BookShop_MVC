@@ -34,7 +34,7 @@ namespace BookShopWeb.Models
 
         [Display(Name = "Cover Image URL")]
         [DataType(DataType.ImageUrl)]
-        public string CoverImageUrl { get; set; }
+        public string? CoverImageUrl { get; set; }
 
         [Display(Name = "Available Quantity")]
         [Range(0, int.MaxValue)]

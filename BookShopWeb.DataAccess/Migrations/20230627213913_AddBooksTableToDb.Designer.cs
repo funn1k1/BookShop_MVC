@@ -4,6 +4,7 @@ using BookShopWeb.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookShopWeb.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230627213913_AddBooksTableToDb")]
+    partial class AddBooksTableToDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -64,43 +67,6 @@ namespace BookShopWeb.DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Books");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Author = "Valerio De Sanctis",
-                            AvailableQuantity = 100,
-                            CoverImageUrl = "https://m.media-amazon.com/images/I/411LNpmcEnL._SX260_.jpg",
-                            Description = "Building Web APIs with ASP.NET Core is a practical beginner’s guide to creating your first web APIs using ASP.NET Core. In it, you’ll develop an API that feeds web-based services, including websites and mobile apps, for a board games application. The book is cleverly structured to mirror a real-world development project, with each chapter introducing a new feature request. You’ll build your API with an ecosystem of ASP.NET Core tools that help simplify everything from setting up your data model to generating documentation",
-                            ISBN = "9781633439481",
-                            ListPrice = 47.50m,
-                            PublicationDate = new DateTime(2023, 6, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Title = "Building Web APIs with ASP.NET Core"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Author = "Jon Skeet",
-                            AvailableQuantity = 100,
-                            Description = "Building Web APIs with ASP.NET Core is a practical beginner’s guide to creating your first web APIs using ASP.NET Core. In it, you’ll develop an API that feeds web-based services, including websites and mobile apps, for a board games application. The book is cleverly structured to mirror a real-world development project, with each chapter introducing a new feature request. You’ll build your API with an ecosystem of ASP.NET Core tools that help simplify everything from setting up your data model to generating documentation",
-                            ISBN = "9781617294532",
-                            ListPrice = 38.99m,
-                            PublicationDate = new DateTime(2023, 6, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Title = "C# in Depth"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Author = "Andrew Lock",
-                            AvailableQuantity = 100,
-                            CoverImageUrl = "https://d374oxlv7wyffd.cloudfront.net/B0977Z1DHC/f2ea5a9a/cover.jpeg",
-                            Description = "ASP.NET Core in Action, Second Edition is a comprehensive guide to creating web applications with ASP.NET Core 5.0. Go from basic HTTP concepts to advanced framework customization. Illustrations and annotated code make learning visual and easy. Master logins, dependency injection, security, and more. This updated edition covers the latest features, including Razor Pages and the new hosting paradigm",
-                            ISBN = "9781617298301",
-                            ListPrice = 50.99m,
-                            PublicationDate = new DateTime(2023, 6, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Title = "ASP.NET Core in Action, Second Edition"
-                        });
                 });
 
             modelBuilder.Entity("BookShopWeb.Models.Category", b =>
