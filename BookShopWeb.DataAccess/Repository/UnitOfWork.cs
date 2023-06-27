@@ -7,12 +7,15 @@ namespace BookShopWeb.DataAccess.Repository
     {
         private readonly ApplicationDbContext _db;
 
-        public ICategoryRepository Categories { get; private set; }
+        public ICategoryRepository Categories { get; }
+
+        public IBookRepository Books { get; }
 
         public UnitOfWork(ApplicationDbContext db)
         {
             _db = db;
             Categories = new CategoryRepository(db);
+            Books = new BookRepository(db);
         }
 
         public void Save()
