@@ -41,13 +41,13 @@ namespace BookShopWeb.Areas.Admin.Controllers
 
             _unitOfWork.Categories.Add(category);
             _unitOfWork.Save();
-            TempData["Success"] = "Category was created successfully";
+            TempData["Success"] = "Category created successfully";
             return RedirectToAction(nameof(Index));
         }
 
         public IActionResult Edit(int? id)
         {
-            if (id == null)
+            if (id is null)
             {
                 return NotFound();
             }
@@ -71,7 +71,7 @@ namespace BookShopWeb.Areas.Admin.Controllers
 
             _unitOfWork.Categories.Update(category);
             _unitOfWork.Save();
-            TempData["Success"] = "Category was edited successfully";
+            TempData["Success"] = "Category edited successfully";
             return RedirectToAction(nameof(Index));
         }
 
@@ -101,14 +101,14 @@ namespace BookShopWeb.Areas.Admin.Controllers
             }
 
             var category = _unitOfWork.Categories.Get(c => c.Id == id);
-            if (category == null)
+            if (category is null)
             {
                 return NotFound();
             }
 
             _unitOfWork.Categories.Remove(category);
             _unitOfWork.Save();
-            TempData["Success"] = "Category was deleted successfully";
+            TempData["Success"] = "Category deleted successfully";
             return RedirectToAction(nameof(Index));
         }
     }
