@@ -1,0 +1,70 @@
+﻿@model Book
+
+<form method="post">
+    <div class="border p-3 mt-4">
+        <div class="row">
+            <h2 class="text-primary">Create Book</h2>
+            <hr />
+        </div>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="mb-3">
+            <label asp-for="Title"></label>
+            <input asp-for="Title" class="form-control" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Author"></label>
+            <input asp-for="Author" class="form-control" />
+            <span asp-validation-for="Author" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Description"></label>
+            <textarea asp-for="Description" class="form-control"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="ISBN"></label>
+            <input asp-for="ISBN" class="form-control" />
+            <span asp-validation-for="ISBN" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="ListPrice"></label>
+            <input asp-for="ListPrice" class="form-control" />
+            <span asp-validation-for="ListPrice" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="DiscountedPrice"></label>
+            <input asp-for="DiscountedPrice" class="form-control" />
+            <span asp-validation-for="DiscountedPrice" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="AvailableQuantity"></label>
+            <input asp-for="AvailableQuantity" class="form-control" />
+            <span asp-validation-for="AvailableQuantity" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="PublicationDate"></label>
+            <input asp-for="PublicationDate" class="form-control" />
+            <span asp-validation-for="PublicationDate" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="CoverImageUrl"></label>
+            <input asp-for="CoverImageUrl" class="form-control" />
+            <span asp-validation-for="CoverImageUrl" class="text-danger"></span>
+        </div>
+        <div class="row">
+            <div class="col-6 text-start">
+                <button type="submit" class="btn btn-primary">Create</button>
+            </div>
+            <div class="col-6 text-end">
+                <a asp-controller="Book" asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @{ 
+        <partial name="_ValidationScriptsPartial" />
+    }
+}

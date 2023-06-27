@@ -17,6 +17,7 @@ namespace BookShopWeb.Models
         public string Description { get; set; }
 
         [Required]
+        [StringLength(13, MinimumLength = 13, ErrorMessage = "ISBN is 13-digits long")]
         public string ISBN { get; set; }
 
         [Required]
@@ -30,7 +31,7 @@ namespace BookShopWeb.Models
 
         [Display(Name = "Publication Date")]
         [DataType(DataType.Date)]
-        public DateTime PublicationDate { get; set; }
+        public DateTime? PublicationDate { get; set; }
 
         [Display(Name = "Cover Image URL")]
         [DataType(DataType.ImageUrl)]
