@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BookShopWeb.Models
 {
@@ -40,5 +41,10 @@ namespace BookShopWeb.Models
         [Display(Name = "Available Quantity")]
         [Range(0, int.MaxValue)]
         public int AvailableQuantity { get; set; }
+
+        public int CategoryId { get; set; }
+
+        [ForeignKey(nameof(CategoryId))]
+        public Category Category { get; set; }
     }
 }
