@@ -22,7 +22,7 @@ namespace BookShopWeb.Areas.Admin.Controllers
             return View(books);
         }
 
-        public IActionResult Create()
+        public IActionResult Upsert(int? id)
         {
             var bookVM = new BookViewModel
             {
@@ -31,63 +31,44 @@ namespace BookShopWeb.Areas.Admin.Controllers
                     {
                         Value = c.Id.ToString(),
                         Text = c.Name
-                    }),
-                Book = new Book()
+                    })
             };
-            return View(bookVM);
-        }
 
-        [HttpPost]
-        public IActionResult Create(BookViewModel bookVM)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View();
-            }
-
-            _unitOfWork.Books.Add(bookVM.Book);
-            _unitOfWork.Save();
-            TempData["Success"] = "Book created successfully";
-            return RedirectToAction(nameof(Index));
-        }
-
-        public IActionResult Edit(int? id)
-        {
             if (id is null)
             {
-                return NotFound();
+                bookVM.Book = new Book();
+                return View(bookVM);
+            }
+            else
+            {
+                var book = _unitOfWork.Books.Get(c => c.Id == id);
+                if (book is null)
+                {
+                    return NotFound();
+                }
+
+                bookVM.Book = book;
             }
 
-            var book = _unitOfWork.Books.Get(c => c.Id == id);
-            if (book is null)
-            {
-                return NotFound();
-            }
-
-            var bookVM = new BookViewModel
-            {
-                CategoryList = _unitOfWork.Categories.GetAll()
-                    .Select(c => new SelectListItem
-                    {
-                        Value = c.Id.ToString(),
-                        Text = c.Name
-                    }),
-                Book = book
-            };
             return View(bookVM);
         }
 
         [HttpPost]
-        public IActionResult Edit(BookViewModel bookVM)
+        public IActionResult Upsert(BookViewModel bookVM, IFormFile file)
         {
-            if (!ModelState.IsValid)
+            if (bookVM.Book.Id != 0)
             {
-                return View();
+                _unitOfWork.Books.Update(bookVM.Book);
+                _unitOfWork.Save();
+                TempData["Success"] = "Book edited successfully";
+            }
+            else
+            {
+                _unitOfWork.Books.Add(bookVM.Book);
+                _unitOfWork.Save();
+                TempData["Success"] = "Book created successfully";
             }
 
-            _unitOfWork.Books.Update(bookVM.Book);
-            _unitOfWork.Save();
-            TempData["Success"] = "Book edited successfully";
             return RedirectToAction(nameof(Index));
         }
 

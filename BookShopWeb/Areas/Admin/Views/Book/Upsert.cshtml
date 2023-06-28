@@ -3,11 +3,17 @@
 <form method="post">
     <div class="border p-3 mt-4">
         <div class="row">
-            <h2 class="text-primary">Edit Book</h2>
+            @if (Model.Book.Id != 0)
+            {
+                <h2 class="text-primary">Edit Book</h2>
+            }
+            else
+            {
+                <h2 class="text-primary">Create Book</h2>
+            }
             <hr />
         </div>
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <input asp-for="Book.Id" hidden />
         <div class="mb-3">
             <label asp-for="Book.Title"></label>
             <input asp-for="Book.Title" class="form-control" />
@@ -20,8 +26,7 @@
         </div>
         <div class="mb-3">
             <label asp-for="Book.Description"></label>
-            <textarea asp-for="Book.Description" class="form-control">
-            </textarea>
+            <textarea asp-for="Book.Description" class="form-control"></textarea>
             <span asp-validation-for="Book.Description" class="text-danger"></span>
         </div>
         <div class="mb-3">
@@ -51,7 +56,7 @@
         </div>
         <div class="mb-3">
             <label asp-for="Book.CoverImageUrl"></label>
-            <input asp-for="Book.CoverImageUrl" class="form-control" />
+            <input type="file" class="form-control" />
             <span asp-validation-for="Book.CoverImageUrl" class="text-danger"></span>
         </div>
         <div class="mb-3">
@@ -63,10 +68,17 @@
         </div>
         <div class="row">
             <div class="col-6 text-start">
-                <button type="submit" class="btn btn-primary">Edit</button>
+                @if (Model.Book.Id != 0)
+                {
+                    <button type="submit" class="btn btn-primary">Edit</button>
+                }
+                else
+                {
+                    <button type="submit" class="btn btn-primary">Create</button>
+                }
             </div>
             <div class="col-6 text-end">
-                <a asp-controller="Category" asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+                <a asp-controller="Book" asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
             </div>
         </div>
     </div>
