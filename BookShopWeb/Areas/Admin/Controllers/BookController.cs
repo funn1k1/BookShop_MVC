@@ -1,6 +1,8 @@
 ﻿using BookShopWeb.DataAccess.Repository.IRepository;
 using BookShopWeb.Models;
+using BookShopWeb.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BookShopWeb.Areas.Admin.Controllers
 {
@@ -22,18 +24,28 @@ namespace BookShopWeb.Areas.Admin.Controllers
 
         public IActionResult Create()
         {
-            return View();
+            var bookVM = new BookViewModel
+            {
+                CategoryList = _unitOfWork.Categories.GetAll()
+                    .Select(c => new SelectListItem
+                    {
+                        Value = c.Id.ToString(),
+                        Text = c.Name
+                    }),
+                Book = new Book()
+            };
+            return View(bookVM);
         }
 
         [HttpPost]
-        public IActionResult Create(Book book)
+        public IActionResult Create(BookViewModel bookVM)
         {
             if (!ModelState.IsValid)
             {
                 return View();
             }
 
-            _unitOfWork.Books.Add(book);
+            _unitOfWork.Books.Add(bookVM.Book);
             _unitOfWork.Save();
             TempData["Success"] = "Book created successfully";
             return RedirectToAction(nameof(Index));
@@ -52,18 +64,28 @@ namespace BookShopWeb.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            return View(book);
+            var bookVM = new BookViewModel
+            {
+                CategoryList = _unitOfWork.Categories.GetAll()
+                    .Select(c => new SelectListItem
+                    {
+                        Value = c.Id.ToString(),
+                        Text = c.Name
+                    }),
+                Book = book
+            };
+            return View(bookVM);
         }
 
         [HttpPost]
-        public IActionResult Edit(Book book)
+        public IActionResult Edit(BookViewModel bookVM)
         {
             if (!ModelState.IsValid)
             {
                 return View();
             }
 
-            _unitOfWork.Books.Update(book);
+            _unitOfWork.Books.Update(bookVM.Book);
             _unitOfWork.Save();
             TempData["Success"] = "Book edited successfully";
             return RedirectToAction(nameof(Index));

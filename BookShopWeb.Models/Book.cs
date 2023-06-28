@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace BookShopWeb.Models
 {
@@ -38,12 +39,15 @@ namespace BookShopWeb.Models
         [DataType(DataType.ImageUrl)]
         public string? CoverImageUrl { get; set; }
 
+        [Required]
         [Display(Name = "Available Quantity")]
         [Range(0, int.MaxValue)]
         public int AvailableQuantity { get; set; }
 
+        [Required]
         public int CategoryId { get; set; }
 
+        [ValidateNever]
         [ForeignKey(nameof(CategoryId))]
         public Category Category { get; set; }
     }
