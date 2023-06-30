@@ -58,6 +58,27 @@ namespace BookShopWeb.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult Upsert(BookViewModel bookVM)
         {
+            if (bookVM.File is not null)
+            {
+                var rootPath = _webHostEnvironment.WebRootPath;
+                var oldImage = $"{rootPath}{bookVM.Book.CoverImageUrl}";
+                if (System.IO.File.Exists(oldImage))
+                {
+                    System.IO.File.Delete(oldImage);
+                }
+
+                var imagesPath = $@"{rootPath}\images\books";
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(bookVM.File.FileName);
+                var fullPath = Path.Combine(imagesPath, fileName);
+
+                using (var fs = new FileStream(fullPath, FileMode.Create))
+                {
+                    bookVM.File.CopyTo(fs);
+                }
+
+                bookVM.Book.CoverImageUrl = $@"\images\books\{fileName}";
+            }
+
             if (bookVM.Book.Id != 0)
             {
                 _unitOfWork.Books.Update(bookVM.Book);
@@ -66,19 +87,6 @@ namespace BookShopWeb.Areas.Admin.Controllers
             }
             else
             {
-                if (bookVM.File is not null)
-                {
-                    var imagesPath = $@"{_webHostEnvironment.WebRootPath}\images\books";
-                    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(bookVM.File.FileName);
-                    var fullPath = $@"{imagesPath}\{fileName}";
-
-                    using (var fs = new FileStream(fullPath, FileMode.Create))
-                    {
-                        bookVM.File.CopyTo(fs);
-                    }
-
-                    bookVM.Book.CoverImageUrl = $@"\images\books\${fileName}";
-                }
                 _unitOfWork.Books.Add(bookVM.Book);
                 _unitOfWork.Save();
                 TempData["Success"] = "Book created successfully";
