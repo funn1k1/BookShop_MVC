@@ -1,6 +1,6 @@
 ﻿@model BookViewModel
 
-<form method="post">
+<form method="post" enctype="multipart/form-data">
     <div class="border p-3 mt-4">
         <div class="row">
             @if (Model.Book.Id != 0)
@@ -55,9 +55,9 @@
             <span asp-validation-for="Book.PublicationDate" class="text-danger"></span>
         </div>
         <div class="mb-3">
-            <label asp-for="Book.CoverImageUrl"></label>
-            <input type="file" class="form-control" />
-            <span asp-validation-for="Book.CoverImageUrl" class="text-danger"></span>
+            <label asp-for="File"></label>
+            <input asp-for="File" class="form-control" />
+            <span asp-validation-for="File" class="text-danger"></span>
         </div>
         <div class="mb-3">
             <label asp-for="Book.CategoryId"></label>
@@ -70,11 +70,11 @@
             <div class="col-6 text-start">
                 @if (Model.Book.Id != 0)
                 {
-                    <button type="submit" class="btn btn-primary">Edit</button>
+                    <button type="submit" id="submit" class="btn btn-primary">Edit</button>
                 }
                 else
                 {
-                    <button type="submit" class="btn btn-primary">Create</button>
+                    <button type="submit" id="submit" class="btn btn-primary">Create</button>
                 }
             </div>
             <div class="col-6 text-end">
@@ -86,7 +86,8 @@
 
 @section Scripts {
     @{
-        <partial name="_TinyMCE" />
         <partial name="_ValidationScriptsPartial" />
+        <partial name="_TinyMCE" />
+
     }
 }

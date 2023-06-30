@@ -10,10 +10,12 @@ namespace BookShopWeb.Areas.Admin.Controllers
     public class BookController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public BookController(IUnitOfWork unitOfWork)
+        public BookController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
         {
             _unitOfWork = unitOfWork;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public IActionResult Index()
@@ -54,7 +56,7 @@ namespace BookShopWeb.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Upsert(BookViewModel bookVM, IFormFile file)
+        public IActionResult Upsert(BookViewModel bookVM)
         {
             if (bookVM.Book.Id != 0)
             {
@@ -64,6 +66,19 @@ namespace BookShopWeb.Areas.Admin.Controllers
             }
             else
             {
+                if (bookVM.File is not null)
+                {
+                    var imagesPath = $@"{_webHostEnvironment.WebRootPath}\images\books";
+                    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(bookVM.File.FileName);
+                    var fullPath = $@"{imagesPath}\{fileName}";
+
+                    using (var fs = new FileStream(fullPath, FileMode.Create))
+                    {
+                        bookVM.File.CopyTo(fs);
+                    }
+
+                    bookVM.Book.CoverImageUrl = $@"\images\books\${fileName}";
+                }
                 _unitOfWork.Books.Add(bookVM.Book);
                 _unitOfWork.Save();
                 TempData["Success"] = "Book created successfully";

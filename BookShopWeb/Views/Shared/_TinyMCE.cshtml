@@ -8,6 +8,15 @@
         mergetags_list: [
             { value: 'First.Name', title: 'First Name' },
             { value: 'Email', title: 'Email' },
-        ]
+        ],
+        setup: function(editor) {
+            editor.on('input', function() {
+                editor.triggerSave();
+            });
+        },
+    });
+
+    $.validator.setDefaults({
+        ignore: ''
     });
 </script>
