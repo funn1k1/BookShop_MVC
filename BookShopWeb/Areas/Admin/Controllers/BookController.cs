@@ -58,41 +58,78 @@ namespace BookShopWeb.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult Upsert(BookViewModel bookVM)
         {
-            if (bookVM.File is not null)
+            if (!ModelState.IsValid)
             {
-                var rootPath = _webHostEnvironment.WebRootPath;
-                var oldImage = $"{rootPath}{bookVM.Book.CoverImageUrl}";
-                if (System.IO.File.Exists(oldImage))
-                {
-                    System.IO.File.Delete(oldImage);
-                }
-
-                var imagesPath = $@"{rootPath}\images\books";
-                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(bookVM.File.FileName);
-                var fullPath = Path.Combine(imagesPath, fileName);
-
-                using (var fs = new FileStream(fullPath, FileMode.Create))
-                {
-                    bookVM.File.CopyTo(fs);
-                }
-
-                bookVM.Book.CoverImageUrl = $@"\images\books\{fileName}";
+                return View();
             }
 
-            if (bookVM.Book.Id != 0)
+            if (bookVM.File is not null)
             {
-                _unitOfWork.Books.Update(bookVM.Book);
-                _unitOfWork.Save();
-                TempData["Success"] = "Book edited successfully";
+                var imageUploadResult = UploadImage(bookVM.File);
+                if (imageUploadResult.Success)
+                {
+                    DeleteOldImage(bookVM.Book.CoverImageUrl);
+                    bookVM.Book.CoverImageUrl = imageUploadResult.ImageUrl;
+                }
+                else
+                {
+                    return BadRequest(imageUploadResult.ErrorMessage);
+                }
+            }
+
+            bool isNewBook = bookVM.Book.Id == 0;
+
+            if (isNewBook)
+            {
+                _unitOfWork.Books.Add(bookVM.Book);
             }
             else
             {
-                _unitOfWork.Books.Add(bookVM.Book);
-                _unitOfWork.Save();
-                TempData["Success"] = "Book created successfully";
+                _unitOfWork.Books.Update(bookVM.Book);
             }
 
+            _unitOfWork.Save();
+
+            TempData["Success"] = isNewBook ? "Book created successfully" : "Book edited successfully";
             return RedirectToAction(nameof(Index));
+        }
+
+        private ImageUploadResult UploadImage(IFormFile file)
+        {
+            if (file is null || file.Length == 0)
+            {
+                return new ImageUploadResult(false, errorMessage: "No image file provided");
+            }
+
+            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+            var imageUrl = Path.Combine("images", "books", fileName);
+            var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, imageUrl);
+
+            try
+            {
+                using (var stream = new FileStream(imagePath, FileMode.Create))
+                {
+                    file.CopyTo(stream);
+                }
+
+                return new ImageUploadResult(true, imageUrl: $@"\{imageUrl}");
+            }
+            catch (Exception ex)
+            {
+                return new ImageUploadResult(false, errorMessage: $"Error uploading image: {ex.Message}");
+            }
+        }
+
+        public void DeleteOldImage(string? imageUrl)
+        {
+            if (!string.IsNullOrEmpty(imageUrl))
+            {
+                var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, imageUrl.TrimStart('\\'));
+                if (System.IO.File.Exists(imagePath))
+                {
+                    System.IO.File.Delete(imagePath);
+                }
+            }
         }
 
         public IActionResult Delete(int? id)
@@ -131,5 +168,21 @@ namespace BookShopWeb.Areas.Admin.Controllers
             TempData["Success"] = "Book deleted successfully";
             return RedirectToAction(nameof(Index));
         }
+    }
+}
+
+class ImageUploadResult
+{
+    public bool Success { get; }
+
+    public string ImageUrl { get; }
+
+    public string ErrorMessage { get; }
+
+    public ImageUploadResult(bool success, string imageUrl = null, string errorMessage = null)
+    {
+        Success = success;
+        ImageUrl = imageUrl;
+        ErrorMessage = errorMessage;
     }
 }

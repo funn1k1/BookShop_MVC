@@ -8,7 +8,7 @@ namespace BookShopWeb.Models.ViewModels
     {
         public Book Book { get; set; }
 
-        public IFormFile File { get; set; }
+        public IFormFile? File { get; set; }
 
         [ValidateNever]
         public IEnumerable<SelectListItem> CategoryList { get; set; }
