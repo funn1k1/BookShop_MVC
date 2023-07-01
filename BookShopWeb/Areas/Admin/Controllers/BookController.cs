@@ -43,7 +43,7 @@ namespace BookShopWeb.Areas.Admin.Controllers
             }
             else
             {
-                var book = _unitOfWork.Books.Get(c => c.Id == id);
+                var book = _unitOfWork.Books.Get(c => c.Id == id, "Category");
                 if (book is null)
                 {
                     return NotFound();
@@ -132,41 +132,68 @@ namespace BookShopWeb.Areas.Admin.Controllers
             }
         }
 
-        public IActionResult Delete(int? id)
+        //public IActionResult Delete(int? id)
+        //{
+        //    if (id is null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    var book = _unitOfWork.Books.Get(c => c.Id == id);
+        //    if (book is null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    return View(book);
+        //}
+
+        //[HttpPost]
+        //[ActionName(nameof(Delete))]
+        //public IActionResult DeletePOST(int? id)
+        //{
+        //    if (id is null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    var book = _unitOfWork.Books.Get(c => c.Id == id);
+        //    if (book is null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    DeleteOldImage(book.CoverImageUrl);
+
+        //    _unitOfWork.Books.Remove(book);
+        //    _unitOfWork.Save();
+        //    TempData["Success"] = "Book deleted successfully";
+        //    return RedirectToAction(nameof(Index));
+        //}
+
+        // Ajax API Call
+        [HttpGet]
+        public IActionResult GetAll()
         {
-            if (id is null)
-            {
-                return NotFound();
-            }
-
-            var book = _unitOfWork.Books.Get(c => c.Id == id);
-            if (book is null)
-            {
-                return NotFound();
-            }
-
-            return View(book);
+            var products = _unitOfWork.Books.GetAll("Category");
+            return Json(new { data = products });
         }
 
-        [HttpPost]
-        [ActionName(nameof(Delete))]
-        public IActionResult DeletePOST(int? id)
+        [HttpDelete]
+        public IActionResult Delete(int? id)
         {
-            if (id is null)
-            {
-                return NotFound();
-            }
-
-            var book = _unitOfWork.Books.Get(c => c.Id == id);
+            var book = _unitOfWork.Books.Get(b => b.Id == id);
             if (book is null)
             {
-                return NotFound();
+                return Json(new { success = true, message = "Error when deleting the book" });
             }
+
+            DeleteOldImage(book.CoverImageUrl);
 
             _unitOfWork.Books.Remove(book);
             _unitOfWork.Save();
-            TempData["Success"] = "Book deleted successfully";
-            return RedirectToAction(nameof(Index));
+
+            return Json(new { success = true, message = $"The book has been deleted" });
         }
     }
 }
@@ -175,11 +202,11 @@ class ImageUploadResult
 {
     public bool Success { get; }
 
-    public string ImageUrl { get; }
+    public string? ImageUrl { get; }
 
-    public string ErrorMessage { get; }
+    public string? ErrorMessage { get; }
 
-    public ImageUploadResult(bool success, string imageUrl = null, string errorMessage = null)
+    public ImageUploadResult(bool success, string? imageUrl = null, string? errorMessage = null)
     {
         Success = success;
         ImageUrl = imageUrl;

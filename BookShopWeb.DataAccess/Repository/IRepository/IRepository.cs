@@ -4,9 +4,9 @@ namespace BookShopWeb.DataAccess.Repository.IRepository
 {
     public interface IRepository<T> where T : class
     {
-        IEnumerable<T> GetAll();
+        IEnumerable<T> GetAll(string? navigationProperties = null);
 
-        T? Get(Expression<Func<T, bool>> filter);
+        T? Get(Expression<Func<T, bool>> predicate, string? navigationProperties = null);
 
         void Add(T entity);
 

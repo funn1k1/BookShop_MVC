@@ -23,6 +23,9 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\images\books\" />
+    <Folder Include="wwwroot\lib\datatables\" />
+    <Folder Include="wwwroot\lib\sweetalert\" />
+    <Folder Include="wwwroot\lib\toastr\" />
   </ItemGroup>
 
 </Project>

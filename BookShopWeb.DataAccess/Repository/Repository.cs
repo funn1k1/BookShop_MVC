@@ -18,9 +18,29 @@ namespace BookShopWeb.DataAccess.Repository
 
         public void Add(T entity) => _dbSet.Add(entity);
 
-        public T? Get(Expression<Func<T, bool>> filter) => _dbSet.FirstOrDefault(filter);
+        public T? Get(Expression<Func<T, bool>> predicate, string? navigationProperties = null)
+        {
+            var query = _dbSet.AsNoTracking();
 
-        public IEnumerable<T> GetAll() => _dbSet.ToList();
+            if (!string.IsNullOrEmpty(navigationProperties))
+            {
+                query = query.Include(navigationProperties);
+            }
+
+            return query.FirstOrDefault(predicate);
+        }
+
+        public IEnumerable<T> GetAll(string? navigationProperties = null)
+        {
+            var query = _dbSet.AsNoTracking();
+
+            if (!string.IsNullOrEmpty(navigationProperties))
+            {
+                query = query.Include(navigationProperties);
+            }
+
+            return query.ToList();
+        }
 
         public void Remove(T entity) => _dbSet.Remove(entity);
 
