@@ -19,13 +19,13 @@ namespace BookShopWeb.Areas.Customer.Controllers
 
         public IActionResult Index()
         {
-            var books = _unitOfWork.Books.GetAll();
+            var books = _unitOfWork.Books.GetAll("Category");
             return View(books);
         }
 
         public IActionResult Details(int? id)
         {
-            var book = _unitOfWork.Books.Get(b => b.Id == id);
+            var book = _unitOfWork.Books.Get(b => b.Id == id, "Category");
             if (book is null)
             {
                 return NotFound();
