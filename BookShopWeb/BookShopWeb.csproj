@@ -30,4 +30,6 @@
     <Folder Include="wwwroot\lib\toastr\" />
   </ItemGroup>
 
+  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
+
 </Project>
