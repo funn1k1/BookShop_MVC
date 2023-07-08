@@ -4,6 +4,7 @@ using BookShopWeb.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookShopWeb.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230708210307_AddCompaniesTableToDb")]
+    partial class AddCompaniesTableToDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -188,12 +191,15 @@ namespace BookShopWeb.DataAccess.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Address")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("City")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Country")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
@@ -201,48 +207,16 @@ namespace BookShopWeb.DataAccess.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PostalCode")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Companies");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Address = "WA 98052",
-                            City = "Redmond",
-                            Country = "USA",
-                            Name = "Microsoft"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Address = "1600 Amphitheatre Parkway",
-                            City = "Mountain View",
-                            Country = "USA",
-                            Name = "Google"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Address = "1 New Orchard Rd",
-                            City = "Armonk",
-                            Country = "USA",
-                            Name = "IBM"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Address = "2300 Cloud Way",
-                            City = "Austin",
-                            Country = "USA",
-                            Name = "Oracle"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

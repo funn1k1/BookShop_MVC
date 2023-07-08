@@ -1,13 +1,13 @@
-﻿@model IEnumerable<Book>
- 
+﻿@model IEnumerable<Company>
+
 <div class="container p-0">
     <div class="row pt-4">
         <div class="col-6">
-            <h2 class="text-primary">Book List</h2>
+            <h2 class="text-primary">Company List</h2>
         </div>
         <div class="col-6 text-end">
-            <a asp-controller="Book" asp-action="Upsert" class="btn btn-primary">
-                <i class="bi bi-plus-circle-fill"></i> Create New Book
+            <a asp-controller="Company" asp-action="Upsert" class="btn btn-primary">
+                <i class="bi bi-plus-circle-fill"></i> Create New Company
             </a>
         </div>
     </div>
@@ -16,16 +16,16 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(b => b.Title)
+                @Html.DisplayNameFor(c => c.Name)
             </th>
             <th>
-                @Html.DisplayNameFor(b => b.Author)
+                @Html.DisplayNameFor(c => c.Address)
             </th>
             <th>
-                @Html.DisplayNameFor(b => b.ListPrice)
+                @Html.DisplayNameFor(c => c.Country)
             </th>
             <th>
-                @Html.DisplayNameFor(b => b.Category)
+                @Html.DisplayNameFor(c => c.City)
             </th>
             <th></th>
         </tr>
@@ -33,5 +33,5 @@
 </table>
 
 @section Scripts {
-    <partial name="_BookDataTables" />
+    <partial name="_CompanyDataTables" />
 }

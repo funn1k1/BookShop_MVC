@@ -4,6 +4,7 @@ using BookShopWeb.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookShopWeb.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230708212157_SeedCompaniesTable")]
+    partial class SeedCompaniesTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -214,7 +217,6 @@ namespace BookShopWeb.DataAccess.Migrations
                         new
                         {
                             Id = 1,
-                            Address = "WA 98052",
                             City = "Redmond",
                             Country = "USA",
                             Name = "Microsoft"
@@ -222,7 +224,6 @@ namespace BookShopWeb.DataAccess.Migrations
                         new
                         {
                             Id = 2,
-                            Address = "1600 Amphitheatre Parkway",
                             City = "Mountain View",
                             Country = "USA",
                             Name = "Google"
@@ -230,7 +231,6 @@ namespace BookShopWeb.DataAccess.Migrations
                         new
                         {
                             Id = 3,
-                            Address = "1 New Orchard Rd",
                             City = "Armonk",
                             Country = "USA",
                             Name = "IBM"
@@ -238,7 +238,6 @@ namespace BookShopWeb.DataAccess.Migrations
                         new
                         {
                             Id = 4,
-                            Address = "2300 Cloud Way",
                             City = "Austin",
                             Country = "USA",
                             Name = "Oracle"

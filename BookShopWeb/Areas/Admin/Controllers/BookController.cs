@@ -188,7 +188,7 @@ namespace BookShopWeb.Areas.Admin.Controllers
             var book = _unitOfWork.Books.Get(b => b.Id == id);
             if (book is null)
             {
-                return Json(new { success = true, message = "Error when deleting the book" });
+                return Json(new { success = false, message = "Error when deleting the book" });
             }
 
             DeleteOldImage(book.CoverImageUrl);

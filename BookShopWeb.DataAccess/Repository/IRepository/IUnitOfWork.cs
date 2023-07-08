@@ -6,6 +6,8 @@
 
         IBookRepository Books { get; }
 
+        ICompanyRepository Companies { get; }
+
         void Save();
     }
 }

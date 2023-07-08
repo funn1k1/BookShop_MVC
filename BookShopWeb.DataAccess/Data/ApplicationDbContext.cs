@@ -15,6 +15,8 @@ namespace BookShopWeb.DataAccess.Data
 
         public DbSet<ApplicationUser> Users { get; set; }
 
+        public DbSet<Company> Companies { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -101,6 +103,43 @@ namespace BookShopWeb.DataAccess.Data
                 },
             };
             modelBuilder.Entity<Book>().HasData(books);
+
+            var companies = new Company[]
+            {
+                new Company()
+                {
+                    Id = 1,
+                    Name = "Microsoft",
+                    Country = "USA",
+                    City = "Redmond",
+                    Address = "WA 98052",
+                },
+                new Company()
+                {
+                    Id = 2,
+                    Name = "Google",
+                    Country = "USA",
+                    City = "Mountain View",
+                    Address = "1600 Amphitheatre Parkway"
+                },
+                new Company()
+                {
+                    Id = 3,
+                    Name = "IBM",
+                    Country = "USA",
+                    City = "Armonk",
+                    Address = "1 New Orchard Rd"
+                },
+                new Company()
+                {
+                    Id = 4,
+                    Name = "Oracle",
+                    Country = "USA",
+                    City = "Austin",
+                    Address = "2300 Cloud Way"
+                },
+            };
+            modelBuilder.Entity<Company>().HasData(companies);
         }
     }
 }

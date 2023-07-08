@@ -10,7 +10,11 @@ namespace BookShopWeb.DataAccess.Repository
 
         public void Update(Category category)
         {
-            _db.Categories.Update(category);
+            var existingCategory = _db.Categories.Find(category.Id);
+            if (existingCategory != null)
+            {
+                _db.Entry(existingCategory).CurrentValues.SetValues(category);
+            }
         }
     }
 }
