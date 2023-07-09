@@ -1,6 +1,9 @@
 ﻿using System.Diagnostics;
+using System.Security.Claims;
 using BookShopWeb.DataAccess.Repository.IRepository;
 using BookShopWeb.Models;
+using BookShopWeb.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookShopWeb.Areas.Customer.Controllers
@@ -19,19 +22,62 @@ namespace BookShopWeb.Areas.Customer.Controllers
 
         public IActionResult Index()
         {
-            var books = _unitOfWork.Books.GetAll("Category");
+            var books = _unitOfWork.Books.GetAll(navigationProperties: "Category");
             return View(books);
         }
 
         public IActionResult Details(int? id)
         {
-            var book = _unitOfWork.Books.Get(b => b.Id == id, "Category");
+            var book = _unitOfWork.Books.Get(b => b.Id == id, navigationProperties: "Category");
             if (book is null)
             {
                 return NotFound();
             }
 
-            return View(book);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId is null)
+            {
+                return RedirectToAction("Login", "Account", new { area = "Identity" });
+            }
+
+            var bookVM = new BookDescriptionViewModel
+            {
+                Book = book,
+                ShoppingCart = new ShoppingCart
+                {
+                    Quantity = 1,
+                    ApplicationUserId = userId,
+                    BookId = book.Id
+                }
+            };
+            return View(bookVM);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public IActionResult Details(BookDescriptionViewModel bookVM)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(bookVM);
+            }
+
+            var shoppingCart = _unitOfWork.ShoppingCart.Get(s =>
+                s.ApplicationUserId == bookVM.ShoppingCart.ApplicationUserId &&
+                s.BookId == bookVM.Book.Id);
+            if (shoppingCart is null)
+            {
+
+                _unitOfWork.ShoppingCart.Add(bookVM.ShoppingCart);
+            }
+            else
+            {
+                shoppingCart.Quantity += bookVM.ShoppingCart.Quantity;
+                _unitOfWork.ShoppingCart.Update(shoppingCart);
+            }
+
+            _unitOfWork.Save();
+            return RedirectToAction(nameof(Index));
         }
 
         public IActionResult Privacy()

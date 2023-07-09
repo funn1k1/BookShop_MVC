@@ -13,12 +13,15 @@ namespace BookShopWeb.DataAccess.Repository
 
         public ICompanyRepository Companies { get; }
 
+        public IShoppingCartRepository ShoppingCart { get; }
+
         public UnitOfWork(ApplicationDbContext db)
         {
             _db = db;
             Categories = new CategoryRepository(db);
             Books = new BookRepository(db);
             Companies = new CompanyRepository(db);
+            ShoppingCart = new ShoppingCartRepository(db);
         }
 
         public void Save()

@@ -8,6 +8,8 @@
 
         ICompanyRepository Companies { get; }
 
+        IShoppingCartRepository ShoppingCart { get; }
+
         void Save();
     }
 }

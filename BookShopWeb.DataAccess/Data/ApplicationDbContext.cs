@@ -17,6 +17,8 @@ namespace BookShopWeb.DataAccess.Data
 
         public DbSet<Company> Companies { get; set; }
 
+        public DbSet<ShoppingCart> ShoppingCart { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

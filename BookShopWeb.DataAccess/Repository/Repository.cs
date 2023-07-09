@@ -16,11 +16,20 @@ namespace BookShopWeb.DataAccess.Repository
             _dbSet = db.Set<T>();
         }
 
-        public void Add(T entity) => _dbSet.Add(entity);
+        public void Add(T? entity) => _dbSet.Add(entity);
 
-        public T? Get(Expression<Func<T, bool>> predicate, string? navigationProperties = null)
+        public T? Get(Expression<Func<T, bool>> predicate, string? navigationProperties = null, bool isTracked = false)
         {
-            var query = _dbSet.AsNoTracking();
+            IQueryable<T> query;
+
+            if (!isTracked)
+            {
+                query = _dbSet.AsNoTracking();
+            }
+            else
+            {
+                query = _dbSet;
+            }
 
             if (!string.IsNullOrEmpty(navigationProperties))
             {
@@ -30,9 +39,18 @@ namespace BookShopWeb.DataAccess.Repository
             return query.FirstOrDefault(predicate);
         }
 
-        public IEnumerable<T> GetAll(string? navigationProperties = null)
+        public IEnumerable<T> GetAll(string? navigationProperties = null, bool isTracked = false)
         {
-            var query = _dbSet.AsNoTracking();
+            IQueryable<T> query;
+
+            if (!isTracked)
+            {
+                query = _dbSet.AsNoTracking();
+            }
+            else
+            {
+                query = _dbSet;
+            }
 
             if (!string.IsNullOrEmpty(navigationProperties))
             {
@@ -42,7 +60,7 @@ namespace BookShopWeb.DataAccess.Repository
             return query.ToList();
         }
 
-        public void Remove(T entity) => _dbSet.Remove(entity);
+        public void Remove(T? entity) => _dbSet.Remove(entity);
 
         public void RemoveRange(IEnumerable<T> entities) => _dbSet.RemoveRange(entities);
     }
