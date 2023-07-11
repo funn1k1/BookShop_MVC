@@ -15,7 +15,7 @@ namespace BookShopWeb.Models
         [ForeignKey(nameof(BookId))]
         public Book Book { get; set; }
 
-        [Range(1, int.MaxValue)]
+        [Range(0, int.MaxValue)]
         public int Quantity { get; set; }
 
         public string ApplicationUserId { get; set; }
@@ -23,5 +23,8 @@ namespace BookShopWeb.Models
         [ValidateNever]
         [ForeignKey(nameof(ApplicationUserId))]
         public ApplicationUser ApplicationUser { get; set; }
+
+        [NotMapped]
+        public decimal TotalListPrice { get; set; }
     }
 }

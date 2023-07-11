@@ -178,7 +178,7 @@ namespace BookShopWeb.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var products = _unitOfWork.Books.GetAll("Category");
+            var products = _unitOfWork.Books.GetAll(navigationProperties: "Category");
             return Json(new { data = products });
         }
 

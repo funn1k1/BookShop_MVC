@@ -77,6 +77,7 @@ namespace BookShopWeb.Areas.Customer.Controllers
             }
 
             _unitOfWork.Save();
+            TempData["Success"] = "The book has been added to the cart";
             return RedirectToAction(nameof(Index));
         }
 

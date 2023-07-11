@@ -18,43 +18,53 @@ namespace BookShopWeb.DataAccess.Repository
 
         public void Add(T? entity) => _dbSet.Add(entity);
 
-        public T? Get(Expression<Func<T, bool>> predicate, string? navigationProperties = null, bool isTracked = false)
+        public T? Get(Expression<Func<T, bool>>? predicate = null, string? navigationProperties = null, bool isTracked = false)
         {
-            IQueryable<T> query;
+            IQueryable<T> query = _dbSet;
+
+            if (predicate is not null)
+            {
+                query = query.Where(predicate);
+            }
 
             if (!isTracked)
             {
-                query = _dbSet.AsNoTracking();
-            }
-            else
-            {
-                query = _dbSet;
+                query = query.AsNoTracking();
             }
 
             if (!string.IsNullOrEmpty(navigationProperties))
             {
-                query = query.Include(navigationProperties);
+                var includeProperties = navigationProperties.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var includeProperty in includeProperties)
+                {
+                    query = query.Include(includeProperty);
+                }
             }
 
             return query.FirstOrDefault(predicate);
         }
 
-        public IEnumerable<T> GetAll(string? navigationProperties = null, bool isTracked = false)
+        public IEnumerable<T> GetAll(Expression<Func<T, bool>>? predicate = null, string? navigationProperties = null, bool isTracked = false)
         {
-            IQueryable<T> query;
+            IQueryable<T> query = _dbSet;
+
+            if (predicate is not null)
+            {
+                query = query.Where(predicate);
+            }
 
             if (!isTracked)
             {
-                query = _dbSet.AsNoTracking();
-            }
-            else
-            {
-                query = _dbSet;
+                query = query.AsNoTracking();
             }
 
             if (!string.IsNullOrEmpty(navigationProperties))
             {
-                query = query.Include(navigationProperties);
+                var includeProperties = navigationProperties.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var includeProperty in includeProperties)
+                {
+                    query = query.Include(includeProperty);
+                }
             }
 
             return query.ToList();

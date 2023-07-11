@@ -1,6 +1,7 @@
 using BookShopWeb.DataAccess.Data;
 using BookShopWeb.DataAccess.Repository;
 using BookShopWeb.DataAccess.Repository.IRepository;
+using BookShopWeb.Models;
 using BookShopWeb.Utility;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -15,7 +16,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 builder.Services.ConfigureApplicationCookie(options =>
