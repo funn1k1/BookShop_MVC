@@ -1,4 +1,5 @@
 ﻿using BookShopWeb.DataAccess.Repository.IRepository;
+using BookShopWeb.Models;
 using BookShopWeb.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,6 +20,11 @@ namespace BookShopWeb.Areas.Customer.Controllers
         public IActionResult Index(string userId)
         {
             var shoppingCarts = _unitOfWork.ShoppingCart.GetAll(c => c.ApplicationUserId == userId, "Book,Book.Category");
+            if (!shoppingCarts.Any())
+            {
+                return NotFound();
+            }
+
             foreach (var shoppingCart in shoppingCarts)
             {
                 var bookPrice = shoppingCart.Book.ListPrice;
@@ -28,7 +34,11 @@ namespace BookShopWeb.Areas.Customer.Controllers
             var shoppingCartVM = new ShoppingCartViewModel
             {
                 Items = shoppingCarts,
-                OverallPrice = shoppingCarts.Sum(c => c.TotalListPrice)
+                OrderHeader = new OrderHeader
+                {
+                    OrderTotal = shoppingCarts.Sum(c => c.TotalListPrice),
+                    ApplicationUserId = userId
+                }
             };
 
             return View(shoppingCartVM);
@@ -61,9 +71,37 @@ namespace BookShopWeb.Areas.Customer.Controllers
             return RedirectToAction(nameof(Index), new { userId = book.ApplicationUserId });
         }
 
-        public IActionResult Checkout(int userId)
+        public IActionResult Checkout(string userId)
         {
-            return View();
+            var shoppingCarts = _unitOfWork.ShoppingCart.GetAll(c => c.ApplicationUserId == userId, "Book,Book.Category");
+            if (!shoppingCarts.Any())
+            {
+                return NotFound();
+            }
+
+            foreach (var shoppingCart in shoppingCarts)
+            {
+                var bookPrice = shoppingCart.Book.ListPrice;
+                shoppingCart.TotalListPrice = bookPrice * shoppingCart.Quantity;
+            }
+
+            var user = _unitOfWork.Users.Get(u => u.Id == userId);
+
+            var shoppingCartVM = new ShoppingCartViewModel
+            {
+                Items = shoppingCarts,
+                OrderHeader = new OrderHeader
+                {
+                    ApplicationUserId = user?.Id,
+                    FullName = user.FullName,
+                    Country = user.Country,
+                    City = user.City,
+                    PostalCode = user.PostalCode,
+                    Address = user.Address,
+                    OrderTotal = shoppingCarts.Sum(c => c.TotalListPrice)
+                }
+            };
+            return View(shoppingCartVM);
         }
     }
 }

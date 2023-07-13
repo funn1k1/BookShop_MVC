@@ -33,7 +33,8 @@ namespace BookShopWeb.Models
 
         public string? PaymentIntentId { get; set; }
 
-        public string Name { get; set; }
+        [Display(Name = "Full Name")]
+        public string FullName { get; set; }
 
         public string Address { get; set; }
 
@@ -41,8 +42,10 @@ namespace BookShopWeb.Models
 
         public string Country { get; set; }
 
-        public string PostalCode { get; set; }
+        [Display(Name = "Postal Code")]
+        public int PostalCode { get; set; }
 
+        [Display(Name = "Phone Number")]
         public string PhoneNumber { get; set; }
     }
 }

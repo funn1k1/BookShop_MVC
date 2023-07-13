@@ -4,6 +4,6 @@
     {
         public IEnumerable<ShoppingCart> Items { get; set; }
 
-        public decimal OverallPrice { get; set; }
+        public OrderHeader OrderHeader { get; set; }
     }
 }
