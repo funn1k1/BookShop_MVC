@@ -2,8 +2,10 @@
 using BookShopWeb.Models;
 using BookShopWeb.Models.ViewModels;
 using BookShopWeb.Utility;
+using HtmlAgilityPack;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Stripe.Checkout;
 
 namespace BookShopWeb.Areas.Customer.Controllers
 {
@@ -21,10 +23,6 @@ namespace BookShopWeb.Areas.Customer.Controllers
         public IActionResult Index(string userId)
         {
             var shoppingCarts = _unitOfWork.ShoppingCart.GetAll(c => c.ApplicationUserId == userId, "Book,Book.Category");
-            if (!shoppingCarts.Any())
-            {
-                return NotFound();
-            }
 
             foreach (var shoppingCart in shoppingCarts)
             {
@@ -135,6 +133,42 @@ namespace BookShopWeb.Areas.Customer.Controllers
             _unitOfWork.OrderHeaders.Add(orderHeader);
             _unitOfWork.Save();
 
+            var domain = "https://localhost:7161";
+            var options = new SessionCreateOptions
+            {
+                SuccessUrl = $"{domain}/customer/cart/orderconfirmation?orderId={orderHeader.Id}",
+                CancelUrl = $"{domain}/customer/cart/index?userId={orderHeader.ApplicationUserId}",
+                LineItems = new List<SessionLineItemOptions>(),
+                Mode = "payment",
+            };
+
+            foreach (var cart in shoppingCartVM.Items)
+            {
+                cart.TotalListPrice = cart.Quantity * cart.Book.ListPrice;
+                var lineItem = new SessionLineItemOptions
+                {
+                    PriceData = new SessionLineItemPriceDataOptions
+                    {
+                        ProductData = new SessionLineItemPriceDataProductDataOptions
+                        {
+                            Name = cart.Book.Title,
+                            Description = RemoveHtmlTags(cart.Book.Description),
+                        },
+                        UnitAmountDecimal = cart.TotalListPrice * 100,
+                        Currency = "USD",
+                    },
+                    Quantity = cart.Quantity,
+                };
+                options.LineItems.Add(lineItem);
+            }
+
+            var service = new SessionService();
+            var session = service.Create(options);
+            Response.Headers.Add("Location", session.Url);
+
+            _unitOfWork.OrderHeaders.UpdateStripePaymentId(orderHeader.Id, session.Id, session.PaymentIntentId);
+            _unitOfWork.Save();
+
             var orderDetails = new List<OrderDetail>();
             foreach (var shoppingCart in shoppingCartVM.Items)
             {
@@ -151,7 +185,7 @@ namespace BookShopWeb.Areas.Customer.Controllers
             _unitOfWork.OrderDetails.AddRange(orderDetails);
             _unitOfWork.Save();
 
-            return RedirectToAction(nameof(OrderConfirmation), new { orderId = orderHeader.Id });
+            return StatusCode(StatusCodes.Status303SeeOther);
         }
 
         public IActionResult OrderConfirmation(int orderId)
@@ -173,7 +207,34 @@ namespace BookShopWeb.Areas.Customer.Controllers
                 orderVM.OrderDetails.Add(orderDetail);
             }
 
+            var service = new SessionService();
+            var session = service.Get(orderHeader.SessionId);
+
+            if (session.PaymentStatus == "paid")
+            {
+                _unitOfWork.OrderHeaders.UpdateStripePaymentId(orderHeader.Id, session.Id, session.PaymentIntentId);
+                _unitOfWork.OrderHeaders.UpdateStatuses(orderHeader.Id, OrderStatuses.Approved, PaymentStatuses.Approved);
+
+                var shoppingCarts = _unitOfWork.ShoppingCart.GetAll(c => c.ApplicationUserId == orderHeader.ApplicationUserId);
+                if (shoppingCarts.Any())
+                {
+                    _unitOfWork.ShoppingCart.RemoveRange(shoppingCarts);
+                }
+            }
+
+            _unitOfWork.Save();
+
             return View(orderVM);
+        }
+
+        private string RemoveHtmlTags(string html)
+        {
+            HtmlDocument htmlDoc = new HtmlDocument();
+            htmlDoc.LoadHtml(html);
+
+            // Remove all HTML tags
+            string strippedText = htmlDoc.DocumentNode.InnerText;
+            return strippedText;
         }
     }
 }

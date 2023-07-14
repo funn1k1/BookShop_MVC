@@ -16,5 +16,45 @@ namespace BookShopWeb.DataAccess.Repository
                 _db.Entry(existingOrder).CurrentValues.SetValues(orderHeader);
             }
         }
+
+        public void UpdateStatuses(int id, string orderStatus, string paymentStatus)
+        {
+            var existingOrder = _db.OrderHeaders.Find(id);
+            if (existingOrder == null)
+            {
+                return;
+            }
+
+            if (!string.IsNullOrEmpty(orderStatus))
+            {
+                existingOrder.OrderStatus = orderStatus;
+            }
+
+            if (!string.IsNullOrEmpty(paymentStatus))
+            {
+                existingOrder.PaymentStatus = paymentStatus;
+            }
+
+        }
+
+        public void UpdateStripePaymentId(int id, string sessionId, string paymentIntentId)
+        {
+            var existingOrder = _db.OrderHeaders.Find(id);
+            if (existingOrder == null)
+            {
+                return;
+            }
+
+            if (!string.IsNullOrEmpty(sessionId))
+            {
+                existingOrder.SessionId = sessionId;
+            }
+
+            if (!string.IsNullOrEmpty(paymentIntentId))
+            {
+                existingOrder.PaymentIntentId = paymentIntentId;
+                existingOrder.PaymentDate = DateTime.Now;
+            }
+        }
     }
 }
