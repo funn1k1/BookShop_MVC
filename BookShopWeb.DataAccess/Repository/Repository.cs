@@ -18,6 +18,8 @@ namespace BookShopWeb.DataAccess.Repository
 
         public void Add(T? entity) => _dbSet.Add(entity);
 
+        public void AddRange(IEnumerable<T> entities) => _dbSet.AddRange(entities);
+
         public T? Get(Expression<Func<T, bool>>? predicate = null, string? navigationProperties = null, bool isTracked = false)
         {
             IQueryable<T> query = _dbSet;

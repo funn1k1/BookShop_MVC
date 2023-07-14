@@ -3,7 +3,7 @@
 <div class="row">
     <div class="col-md-4 order-md-2 mb-4">
         <h4 class="d-flex justify-content-between align-items-center mb-3">
-            <span class="text-muted">Order Header</span>
+            <span class="text-muted">Your cart</span>
             <span class="badge badge-secondary badge-pill">3</span>
         </h4>
 
@@ -13,12 +13,12 @@
                 <li class="list-group-item d-flex justify-content-between lh-condensed">
                     <div>
                         <h6 class="my-0">@cart.Book.Title</h6>
-                        <small class="text-muted">@cart.Book.Category.Name</small>
+                        <span class="text-muted d-block">@cart.Book.Category.Name</span>
+                        <span class="text-muted d-block">X@(cart.Quantity)</span>
                     </div>
                     <span class="text-muted">@cart.Book.ListPrice.ToString("c")</span>
                 </li>
             }
-
 
             <li class="list-group-item d-flex justify-content-between bg-light">
                 <div class="text-success">
@@ -49,53 +49,42 @@
     </div>
     <div class="col-md-8 order-md-1">
         <h4 class="mb-3">Billing address</h4>
-        <form>
+        <form method="post">
+            <input asp-for="OrderHeader.ApplicationUserId" hidden />
             <div class="mb-3">
                 <label asp-for="OrderHeader.FullName"></label>
-                <div class="input-group">
-                    <input asp-for="OrderHeader.FullName" class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.FullName)">
-                    <span asp-validation-for="OrderHeader.FullName" class="text-message"></span>
-                </div>
+                <input asp-for="OrderHeader.FullName" class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.FullName)">
+                <span asp-validation-for="OrderHeader.FullName" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
                 <label asp-for="OrderHeader.Country"></label>
-                <div class="input-group">
-                    <input asp-for="OrderHeader.Country" class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.Country)">
-                    <span asp-validation-for="OrderHeader.Country" class="text-message"></span>
-                </div>
+                <input asp-for="OrderHeader.Country" class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.Country)">
+                <span asp-validation-for="OrderHeader.Country" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
                 <label asp-for="OrderHeader.City"></label>
-                <div class="input-group">
-                    <input asp-for="OrderHeader.City" class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.City)">
-                    <span asp-validation-for="OrderHeader.City" class="text-message"></span>
-                </div>
+                <input asp-for="OrderHeader.City" class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.City)">
+                <span asp-validation-for="OrderHeader.City" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
                 <label asp-for="OrderHeader.Address"></label>
-                <div class="input-group">
-                    <input asp-for="OrderHeader.Address" class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.Address)">
-                    <span asp-validation-for="OrderHeader.Address" class="text-message"></span>
-                </div>
+                <input asp-for="OrderHeader.Address" class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.Address)">
+                <span asp-validation-for="OrderHeader.Address" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
                 <label asp-for="OrderHeader.PostalCode"></label>
-                <div class="input-group">
-                    <input asp-for="OrderHeader.PostalCode" class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.PostalCode)">
-                    <span asp-validation-for="OrderHeader.PostalCode" class="text-message"></span>
-                </div>
+                <input asp-for="OrderHeader.PostalCode" class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.PostalCode)">
+                <span asp-validation-for="OrderHeader.PostalCode" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
                 <label asp-for="OrderHeader.PhoneNumber"></label>
-                <div class="input-group">
-                    <input asp-for="OrderHeader.PhoneNumber" class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.PhoneNumber)">
-                    <span asp-validation-for="OrderHeader.PhoneNumber" class="text-message"></span>
-                </div>
+                <input asp-for="OrderHeader.PhoneNumber" class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.PhoneNumber)">
+                <span asp-validation-for="OrderHeader.PhoneNumber" class="text-danger"></span>
             </div>
 
             <hr class="mb-4">

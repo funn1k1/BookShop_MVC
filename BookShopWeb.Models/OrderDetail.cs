@@ -13,7 +13,7 @@ namespace BookShopWeb.Models
 
         [ForeignKey("OrderHeaderId")]
         [ValidateNever]
-        public string OrderHeader { get; set; }
+        public OrderHeader OrderHeader { get; set; }
 
         public int BookId { get; set; }
 
@@ -23,6 +23,6 @@ namespace BookShopWeb.Models
 
         public int Quantity { get; set; }
 
-        public decimal Price { get; set; }
+        public decimal TotalPrice { get; set; }
     }
 }
