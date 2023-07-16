@@ -1,0 +1,57 @@
+﻿<script src="~/lib/datatables/DataTables-1.13.4/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript">
+
+
+    $(function () {
+        const queryString = window.location.href;
+        const url = new URL(queryString);
+        const stat = url.searchParams.get("status");
+
+        loadData(stat);
+    })
+
+    function loadData(status) {
+        $(".table").DataTable({
+            ajax: `/admin/order/getall?status=${status}`,
+            columns: [
+                {
+                    data: "id",
+                    width: "5%"
+                },
+                {
+                    data: "applicationUser.fullName",
+                    width: "25%"
+                },
+                {
+                    data: "phoneNumber",
+                    width: "20%"
+                },
+                {
+                    data: "applicationUser.email",
+                    width: "20%"
+                },
+                {
+                    data: "paymentStatus",
+                    width: "10%"
+                },
+                {
+                    data: "orderTotal",
+                    width: "10%"
+                },
+                {
+                    data: "id",
+                    render: function (data) {
+                        return `
+                            <div class="d-flex justify-content-center align-items-center">
+                                <a href="/Admin/Order/Details?id=${data}" class="btn btn-primary">
+                                    <i class="bi bi-pencil"></i> Edit
+                                </a>
+                            </div>
+                        `
+                    },
+                    width: "10%"
+                }
+            ]
+        });
+    }
+</script>

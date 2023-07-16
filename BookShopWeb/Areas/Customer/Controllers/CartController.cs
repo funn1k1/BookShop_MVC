@@ -110,6 +110,11 @@ namespace BookShopWeb.Areas.Customer.Controllers
         public IActionResult Checkout(ShoppingCartViewModel shoppingCartVM)
         {
             shoppingCartVM.Items = _unitOfWork.ShoppingCart.GetAll(c => c.ApplicationUserId == shoppingCartVM.OrderHeader.ApplicationUserId, "Book,Book.Category");
+            foreach (var cart in shoppingCartVM.Items)
+            {
+                cart.TotalListPrice = cart.Book.ListPrice * cart.Quantity;
+            }
+
             if (!ModelState.IsValid)
             {
                 return View(shoppingCartVM);
@@ -197,15 +202,16 @@ namespace BookShopWeb.Areas.Customer.Controllers
             }
 
             var orderDetails = _unitOfWork.OrderDetails.GetAll(o => o.OrderHeaderId == orderHeader.Id, "Book,Book.Category");
-            var orderVM = new OrderConfirmationViewModel
+            if (!orderDetails.Any())
+            {
+                return NotFound();
+            }
+
+            var orderVM = new OrderViewModel
             {
                 OrderHeader = orderHeader,
-                OrderDetails = new List<OrderDetail>()
+                OrderDetails = orderDetails
             };
-            foreach (var orderDetail in orderDetails)
-            {
-                orderVM.OrderDetails.Add(orderDetail);
-            }
 
             var service = new SessionService();
             var session = service.Get(orderHeader.SessionId);

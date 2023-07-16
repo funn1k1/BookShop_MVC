@@ -15,22 +15,28 @@ namespace BookShopWeb.Models
         [ValidateNever]
         public ApplicationUser ApplicationUser { get; set; }
 
+        [Display(Name = "Order Date")]
         public DateTime OrderDate { get; set; }
 
         public DateTime ShippingDate { get; set; }
 
+        [Display(Name = "Total")]
         public decimal OrderTotal { get; set; }
 
+        [Display(Name = "Order Status")]
         public string? OrderStatus { get; set; }
 
         public string? SessionId { get; set; }
 
+        [Display(Name = "Payment Status")]
         public string? PaymentStatus { get; set; }
 
+        [Display(Name = "Tracking Number")]
         public string? TrackingNumber { get; set; }
 
         public string? Carrier { get; set; }
 
+        [Display(Name = "Payment Date")]
         public DateTime PaymentDate { get; set; }
 
         public string? PaymentIntentId { get; set; }

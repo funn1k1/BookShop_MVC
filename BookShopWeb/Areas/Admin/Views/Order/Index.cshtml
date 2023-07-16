@@ -1,0 +1,57 @@
+﻿@model IEnumerable<OrderHeader>
+
+@{ 
+    var staticClassType = typeof(PaymentStatuses);
+    var fields = staticClassType.GetFields();
+    var activeStatus = Context.Request.Query["status"];
+}
+
+<div class="container p-0">
+    <div class="row pt-4">
+        <div class="col-6">
+            <h2 class="text-primary">Order List</h2>
+        </div>
+    </div>
+    <div class="d-flex justify-content-end mb-2">
+        <div class="list-group list-group-horizontal list-group-horizontal">
+            @foreach (var field in fields)
+            {
+                var paymentStatus = (string?)field.GetValue(null);
+                <a asp-route-status="@paymentStatus" class="list-group-item list-group-item-action
+                   @(string.Equals(activeStatus, paymentStatus, StringComparison.OrdinalIgnoreCase) ? "active" : "")">
+                    @paymentStatus
+                </a>
+            }
+        </div>
+    </div>
+
+</div>
+<table class="table table-hover table-bordered" style="width: 100%">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(c => c.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(c => c.FullName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(c => c.PhoneNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(c => c.ApplicationUser.Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(c => c.OrderStatus)
+            </th>
+            <th>
+                @Html.DisplayNameFor(c => c.OrderTotal)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+</table>
+
+@section Scripts {
+    <partial name="_OrderDataTables" />
+}

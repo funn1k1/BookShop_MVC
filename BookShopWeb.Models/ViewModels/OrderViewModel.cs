@@ -1,9 +1,9 @@
 ﻿namespace BookShopWeb.Models.ViewModels
 {
-    public class OrderConfirmationViewModel
+    public class OrderViewModel
     {
         public OrderHeader OrderHeader { get; set; }
 
-        public List<OrderDetail> OrderDetails { get; set; }
+        public IEnumerable<OrderDetail> OrderDetails { get; set; }
     }
 }
