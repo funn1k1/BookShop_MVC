@@ -149,7 +149,6 @@ namespace BookShopWeb.Areas.Customer.Controllers
 
             foreach (var cart in shoppingCartVM.Items)
             {
-                cart.TotalListPrice = cart.Quantity * cart.Book.ListPrice;
                 var lineItem = new SessionLineItemOptions
                 {
                     PriceData = new SessionLineItemPriceDataOptions
@@ -159,7 +158,7 @@ namespace BookShopWeb.Areas.Customer.Controllers
                             Name = cart.Book.Title,
                             Description = RemoveHtmlTags(cart.Book.Description),
                         },
-                        UnitAmountDecimal = cart.TotalListPrice * 100,
+                        UnitAmountDecimal = cart.Book.ListPrice * 100,
                         Currency = "USD",
                     },
                     Quantity = cart.Quantity,

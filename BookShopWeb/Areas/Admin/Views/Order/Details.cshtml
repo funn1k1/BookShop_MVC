@@ -1,50 +1,67 @@
 ﻿@model OrderViewModel
 
-<div class="row">
-    <div class="col-md-4 order-md-2 mb-4">
-        <h4 class="d-flex justify-content-between align-items-center mb-3">
-            <span class="text-muted">Order Books</span>
-            <span class="badge badge-secondary badge-pill">3</span>
-        </h4>
+<form method="post">
+    <div class="row">
 
-        <ul class="list-group mb-3">
-            @foreach (var orderDetail in Model.OrderDetails)
-            {
-                <li class="list-group-item d-flex justify-content-between lh-condensed">
-                    <div>
-                        <h6 class="my-0">@orderDetail.Book.Title</h6>
-                        <span class="text-muted d-block">@orderDetail.Book.Category.Name</span>
-                        <span class="text-muted d-block">X@(orderDetail.Quantity)</span>
-                    </div>
-                    <span class="text-muted">@orderDetail.Book.ListPrice.ToString("c")</span>
+        <div class="col-md-4 order-md-2 mb-4">
+
+            <h4 class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted">Order Books</span>
+                <span class="badge badge-secondary badge-pill">3</span>
+            </h4>
+
+            <ul class="list-group mb-3">
+                @foreach (var orderDetail in Model.OrderDetails)
+                {
+                    <li class="list-group-item d-flex justify-content-between">
+                        <div>
+                            <h6 class="my-0">Title: "@orderDetail.Book.Title"</h6>
+                            <span class="text-muted d-block">Category: @orderDetail.Book.Category.Name</span>
+                            <span class="text-muted d-block">Quantity: @orderDetail.Quantity</span>
+                            <span class="text-muted d-block">Price: @orderDetail.Book.ListPrice.ToString("c")</span>
+                        </div>
+                        <span class="text-dark">@orderDetail.TotalPrice.ToString("c")</span>
+                    </li>
+                }
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>@Html.DisplayNameFor(o => o.OrderHeader.OrderStatus)</span>
+                    <strong class="text-success">@Model.OrderHeader.OrderStatus</strong>
                 </li>
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>Total Price(USD)</span>
+                    <strong>@Model.OrderHeader.OrderTotal.ToString("c")</strong>
+                </li>
+            </ul>
+
+            @if (User.IsInRole(Roles.Admin))
+            {
+                @if (Model.OrderHeader.OrderStatus == OrderStatuses.Approved)
+                {
+                    <div class="mt-3">
+                        <button type="submit" asp-action="ProcessOrder" class="btn btn-info btn-block w-100">Start Processing</button>
+                    </div>
+                }
+
+                @if (Model.OrderHeader.OrderStatus == OrderStatuses.Processing)
+                {
+                    <div class="mt-3">
+                        <button type="submit" onclick="return validateInput()" asp-action="ShipOrder" id="shipOrder" class="btn btn-dark btn-block w-100">Ship Order</button>
+                    </div>
+                }
+
+                @if (Model.OrderHeader.OrderStatus != OrderStatuses.Shipped &&
+                 Model.OrderHeader.OrderStatus != OrderStatuses.Refunded &&
+                 Model.OrderHeader.OrderStatus != OrderStatuses.Cancelled)
+                {
+                    <div class="mt-3">
+                        <button type="submit" asp-action="CancelOrder" class="btn btn-warning btn-block">Cancel Order</button>
+                    </div>
+                }
             }
-
-            <li class="list-group-item d-flex justify-content-between">
-                <span>Total (USD)</span>
-                <strong>@Model.OrderHeader.OrderTotal.ToString("c")</strong>
-            </li>
-        </ul>
-
-        <div class="mt-3">
-            <a asp-action="Index" class="btn btn-success btn-block w-100">Pay Now</a>
         </div>
-
-        <div class="mt-3">
-            <a asp-action="Index" class="btn btn-info btn-block w-100">Start Processing</a>
-        </div>
-        
-        <div class="mt-3">
-            <a asp-action="Index" class="btn btn-dark btn-block w-100">Ship Order</a>
-        </div>
-
-        <div class="mt-3">
-            <a asp-action="Index" class="btn btn-warning btn-block">Cancel Order</a>
-        </div>
-    </div>
-    <div class="col-md-8 order-md-1">
-        <h4 class="mb-3">Order Details</h4>
-        <form method="post">
+        <div class="col-md-8 order-md-1">
+            <h4 class="mb-3">Order Details</h4>
+            <input asp-for="OrderHeader.Id" hidden />
             <input asp-for="OrderHeader.ApplicationUserId" hidden />
             <div class="mb-3">
                 <label asp-for="OrderHeader.FullName"></label>
@@ -54,7 +71,7 @@
                 }
                 else
                 {
-                    <input asp-for="OrderHeader.FullName" disabled class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.FullName)">
+                    <input asp-for="OrderHeader.FullName" class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.FullName)" disabled>
 
                 }
                 <span asp-validation-for="OrderHeader.FullName" class="text-danger"></span>
@@ -68,7 +85,7 @@
                 }
                 else
                 {
-                    <input asp-for="OrderHeader.PhoneNumber" disabled class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.PhoneNumber)">
+                    <input asp-for="OrderHeader.PhoneNumber" class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.PhoneNumber)" disabled>
                 }
                 <span asp-validation-for="OrderHeader.PhoneNumber" class="text-danger"></span>
             </div>
@@ -81,7 +98,7 @@
                 }
                 else
                 {
-                    <input asp-for="OrderHeader.Country" disabled class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.Country)">
+                    <input asp-for="OrderHeader.Country" class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.Country)" disabled>
                 }
                 <span asp-validation-for="OrderHeader.Country" class="text-danger"></span>
             </div>
@@ -94,7 +111,7 @@
                 }
                 else
                 {
-                    <input asp-for="OrderHeader.City" disabled class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.City)">
+                    <input asp-for="OrderHeader.City" class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.City)" disabled>
                 }
                 <span asp-validation-for="OrderHeader.City" class="text-danger"></span>
             </div>
@@ -107,7 +124,7 @@
                 }
                 else
                 {
-                    <input asp-for="OrderHeader.Address" disabled class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.Address)">
+                    <input asp-for="OrderHeader.Address" class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.Address)" disabled>
                 }
                 <span asp-validation-for="OrderHeader.Address" class="text-danger"></span>
             </div>
@@ -120,21 +137,14 @@
                 }
                 else
                 {
-                    <input asp-for="OrderHeader.PostalCode" disabled class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.PostalCode)">
+                    <input asp-for="OrderHeader.PostalCode" class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.PostalCode)" disabled>
                 }
                 <span asp-validation-for="OrderHeader.PostalCode" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
                 <label asp-for="OrderHeader.ApplicationUser.Email"></label>
-                @if (User.IsInRole(Roles.Admin))
-                {
-                    <input asp-for="OrderHeader.ApplicationUser.Email" class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.ApplicationUser.Email)">
-                }
-                else
-                {
-                    <input asp-for="OrderHeader.ApplicationUser.Email" disabled class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.ApplicationUser.Email)">
-                }
+                <input asp-for="OrderHeader.ApplicationUser.Email" class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.ApplicationUser.Email)" disabled>
                 <span asp-validation-for="OrderHeader.ApplicationUser.Email" class="text-danger"></span>
             </div>
 
@@ -146,7 +156,7 @@
                 }
                 else
                 {
-                    <input asp-for="OrderHeader.Carrier" disabled class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.Carrier)">
+                    <input asp-for="OrderHeader.Carrier" class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.Carrier)" disabled>
                 }
                 <span asp-validation-for="OrderHeader.Carrier" class="text-danger"></span>
             </div>
@@ -159,7 +169,7 @@
                 }
                 else
                 {
-                    <input asp-for="OrderHeader.TrackingNumber" disabled class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.TrackingNumber)">
+                    <input asp-for="OrderHeader.TrackingNumber" class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.TrackingNumber)" disabled>
                 }
                 <span asp-validation-for="OrderHeader.TrackingNumber" class="text-danger"></span>
             </div>
@@ -172,26 +182,26 @@
                 }
                 else
                 {
-                    <input asp-for="OrderHeader.ShippingDate" disabled class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.ShippingDate)">
+                    <input asp-for="OrderHeader.ShippingDate" class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.ShippingDate)" disabled>
                 }
                 <span asp-validation-for="OrderHeader.ShippingDate" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
                 <label asp-for="OrderHeader.OrderStatus"></label>
-                <input asp-for="OrderHeader.OrderStatus" disabled class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.OrderStatus)">
+                <input asp-for="OrderHeader.OrderStatus" class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.OrderStatus)" disabled>
                 <span asp-validation-for="OrderHeader.OrderStatus" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
                 <label asp-for="OrderHeader.OrderDate"></label>
-                <input asp-for="OrderHeader.OrderDate" disabled class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.OrderDate)">
+                <input asp-for="OrderHeader.OrderDate" class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.OrderDate)" disabled>
                 <span asp-validation-for="OrderHeader.OrderDate" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
                 <label asp-for="OrderHeader.OrderTotal"></label>
-                <input asp-for="OrderHeader.OrderTotal" disabled class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.OrderTotal)">
+                <input asp-for="OrderHeader.OrderTotal" class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.OrderTotal)" disabled>
                 <span asp-validation-for="OrderHeader.OrderTotal" class="text-danger"></span>
             </div>
 
@@ -199,32 +209,67 @@
             {
                 <div class="mb-3">
                     <label asp-for="OrderHeader.SessionId"></label>
-                    <input asp-for="OrderHeader.SessionId" disabled class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.SessionId)">
+                    <input asp-for="OrderHeader.SessionId" class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.SessionId)" disabled>
                     <span asp-validation-for="OrderHeader.SessionId" class="text-danger"></span>
                 </div>
 
                 <div class="mb-3">
                     <label asp-for="OrderHeader.PaymentIntentId"></label>
-                    <input asp-for="OrderHeader.PaymentIntentId" disabled class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.PaymentIntentId)">
+                    <input asp-for="OrderHeader.PaymentIntentId" class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.PaymentIntentId)" disabled>
                     <span asp-validation-for="OrderHeader.PaymentIntentId" class="text-danger"></span>
                 </div>
             }
 
             <div class="mb-3">
                 <label asp-for="OrderHeader.PaymentStatus"></label>
-                <input asp-for="OrderHeader.PaymentStatus" disabled class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.PaymentStatus)">
+                <input asp-for="OrderHeader.PaymentStatus" class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.PaymentStatus)" disabled>
                 <span asp-validation-for="OrderHeader.PaymentStatus" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
                 <label asp-for="OrderHeader.PaymentDate"></label>
-                <input asp-for="OrderHeader.PaymentDate" disabled class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.PaymentDate)">
+                <input asp-for="OrderHeader.PaymentDate" class="form-control" placeholder="@Html.DisplayNameFor(c => c.OrderHeader.PaymentDate)" disabled>
                 <span asp-validation-for="OrderHeader.PaymentDate" class="text-danger"></span>
             </div>
 
             <hr class="mb-4">
 
-            <button class="btn btn-primary btn-block" type="submit">Update Order Details</button>
-        </form>
+            @if (User.IsInRole(Roles.Admin))
+            {
+                <button class="btn btn-primary btn-block" type="submit" asp-action="UpdateDetails" asp-route-id="">Update Order Details</button>
+            }
+        </div>
     </div>
-</div>
+
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/lib/sweetalert/sweetalert2.min.js"></script>
+    <script>
+        function validateInput() {
+            const carrier = document.getElementById("OrderHeader_Carrier");
+            const trackingNumber = document.getElementById("OrderHeader_TrackingNumber");
+
+            if (carrier.value === "") {
+                Swal.fire({
+                    icon: 'error',
+                    title: "Please, enter Carrier",
+                    text: 'Something went wrong!',
+                })
+                return false;
+            }
+
+            if (trackingNumber.value === "") {
+                Swal.fire({
+                    icon: 'error',
+                    title: "Please, enter Tracking Number",
+                    text: 'Something went wrong!',
+                })
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+}

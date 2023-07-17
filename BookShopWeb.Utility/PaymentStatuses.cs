@@ -8,6 +8,8 @@
 
         public const string Delayed = "DelayedPayment";
 
+        public const string Refunded = "Refunded";
+
         public const string Rejected = "Rejected";
     }
 }
