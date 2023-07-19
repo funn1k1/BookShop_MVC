@@ -23,6 +23,17 @@ namespace BookShopWeb.Areas.Customer.Controllers
         public IActionResult Index()
         {
             var books = _unitOfWork.Books.GetAll(navigationProperties: "Category");
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId is not null)
+            {
+                var cartsCount = _unitOfWork.ShoppingCart.GetAll(c => c.ApplicationUserId == userId).Count();
+                if (cartsCount > 0)
+                {
+                    HttpContext.Session.SetInt32("ShoppingCart_Count", cartsCount);
+                }
+            }
+
             return View(books);
         }
 
@@ -67,8 +78,9 @@ namespace BookShopWeb.Areas.Customer.Controllers
                 s.BookId == bookVM.Book.Id);
             if (shoppingCart is null)
             {
-
                 _unitOfWork.ShoppingCart.Add(bookVM.ShoppingCart);
+                var oldCount = _unitOfWork.ShoppingCart.GetAll(c => c.ApplicationUserId == bookVM.ShoppingCart.ApplicationUserId).Count();
+                HttpContext.Session.SetInt32("SessionCart_Count", oldCount + 1);
             }
             else
             {
@@ -77,6 +89,7 @@ namespace BookShopWeb.Areas.Customer.Controllers
             }
 
             _unitOfWork.Save();
+
             TempData["Success"] = "The book has been added to the cart";
             return RedirectToAction(nameof(Index));
         }

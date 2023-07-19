@@ -69,6 +69,12 @@ namespace BookShopWeb.Areas.Customer.Controllers
             _unitOfWork.ShoppingCart.Remove(book);
             _unitOfWork.Save();
 
+            var oldCount = HttpContext.Session.GetInt32("ShoppingCart_Count");
+            if (oldCount is not null)
+            {
+                HttpContext.Session.SetInt32("ShoppingCart_Count", oldCount.GetValueOrDefault() - 1);
+            }
+
             return RedirectToAction(nameof(Index), new { userId = book.ApplicationUserId });
         }
 

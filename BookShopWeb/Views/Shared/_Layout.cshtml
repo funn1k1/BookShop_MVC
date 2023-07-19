@@ -1,4 +1,5 @@
 ﻿@inject UserManager<ApplicationUser> UserManager
+@inject IHttpContextAccessor HttpContextAccessor
 
 <!DOCTYPE html>
 <html lang="en">
@@ -56,10 +57,15 @@
                         }
                         @{
                             var userId = UserManager.GetUserId(User);
+                            var sessionCount = HttpContextAccessor.HttpContext?.Session.GetInt32("ShoppingCart_Count");
                         }
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="Customer" asp-controller="Cart" asp-action="Index" asp-route-userId="@userId">
                                 <i class="bi bi-cart4"></i>
+                                @if (sessionCount is not null && sessionCount > 0)
+                                {
+                                    <span>(@sessionCount)</span>
+                                }
                             </a>
                         </li>
                     </ul>
