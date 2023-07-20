@@ -23,6 +23,7 @@ namespace BookShopWeb.Areas.Customer.Controllers
         public IActionResult Index()
         {
             var books = _unitOfWork.Books.GetAll(navigationProperties: "Category");
+            ViewData["Title"] = "Home";
             return View(books);
         }
 

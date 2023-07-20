@@ -233,7 +233,9 @@ namespace BookShopWeb.Areas.Customer.Controllers
                 }
             }
 
+            HttpContext.Session.Clear();
             _unitOfWork.Save();
+
 
             return View(orderVM);
         }
