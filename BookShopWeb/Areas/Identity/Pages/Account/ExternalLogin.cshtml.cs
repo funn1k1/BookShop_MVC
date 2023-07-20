@@ -7,6 +7,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
 using BookShopWeb.Models;
+using BookShopWeb.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -80,6 +81,19 @@ namespace BookShopWeb.Areas.Identity.Pages.Account
             [Required]
             [EmailAddress]
             public string Email { get; set; }
+
+            [Display(Name = "Full Name")]
+            public string FullName { get; set; }
+
+
+            [Display(Name = "Postal Code")]
+            public int PostalCode { get; set; }
+
+            public string Address { get; set; }
+
+            public string City { get; set; }
+
+            public string Country { get; set; }
         }
 
         public IActionResult OnGet() => RedirectToPage("./Login");
@@ -127,7 +141,8 @@ namespace BookShopWeb.Areas.Identity.Pages.Account
                 {
                     Input = new InputModel
                     {
-                        Email = info.Principal.FindFirstValue(ClaimTypes.Email)
+                        Email = info.Principal.FindFirstValue(ClaimTypes.Email),
+                        FullName = info.Principal.FindFirstValue(ClaimTypes.Name)
                     };
                 }
                 return Page();
@@ -152,6 +167,12 @@ namespace BookShopWeb.Areas.Identity.Pages.Account
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
 
+                user.FullName = Input.FullName;
+                user.PostalCode = Input.PostalCode;
+                user.Address = Input.Address;
+                user.City = Input.City;
+                user.Country = Input.Country;
+
                 var result = await _userManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
@@ -159,7 +180,7 @@ namespace BookShopWeb.Areas.Identity.Pages.Account
                     if (result.Succeeded)
                     {
                         _logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
-
+                        await _userManager.AddToRoleAsync(user, Roles.User);
                         var userId = await _userManager.GetUserIdAsync(user);
                         var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                         code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
