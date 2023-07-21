@@ -147,7 +147,7 @@ namespace BookShopWeb.Areas.Customer.Controllers
             _unitOfWork.OrderHeaders.Add(orderHeader);
             _unitOfWork.Save();
 
-            var domain = "https://localhost:7161";
+            var domain = $"{Request.Scheme}://{Request.Host}";
             var options = new SessionCreateOptions
             {
                 SuccessUrl = $"{domain}/customer/cart/orderconfirmation?orderId={orderHeader.Id}",
