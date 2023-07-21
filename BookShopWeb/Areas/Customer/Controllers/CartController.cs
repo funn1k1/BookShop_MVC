@@ -4,6 +4,7 @@ using BookShopWeb.Models.ViewModels;
 using BookShopWeb.Utility;
 using HtmlAgilityPack;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Stripe.Checkout;
 
@@ -14,10 +15,12 @@ namespace BookShopWeb.Areas.Customer.Controllers
     public class CartController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IEmailSender _emailSender;
 
-        public CartController(IUnitOfWork unitOfWork)
+        public CartController(IUnitOfWork unitOfWork, IEmailSender emailSender)
         {
             _unitOfWork = unitOfWork;
+            _emailSender = emailSender;
         }
 
         public IActionResult Index(string userId)
@@ -198,7 +201,7 @@ namespace BookShopWeb.Areas.Customer.Controllers
             return StatusCode(StatusCodes.Status303SeeOther);
         }
 
-        public IActionResult OrderConfirmation(int orderId)
+        public async Task<IActionResult> OrderConfirmation(int orderId)
         {
             var orderHeader = _unitOfWork.OrderHeaders.Get(o => o.Id == orderId, "ApplicationUser");
             if (orderHeader is null)
@@ -235,7 +238,7 @@ namespace BookShopWeb.Areas.Customer.Controllers
 
             HttpContext.Session.Clear();
             _unitOfWork.Save();
-
+            await _emailSender.SendEmailAsync(orderHeader.ApplicationUser.Email, $"Order-{orderHeader.Id} placed", $"<p>The order-{orderHeader.Id} was successfully placed. Thank you for the purchase!</p>");
 
             return View(orderVM);
         }
