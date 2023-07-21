@@ -119,24 +119,8 @@ namespace BookShopWeb.Areas.Identity.Pages.Account
             public IEnumerable<SelectListItem> Roles { get; set; }
         }
 
-        public async Task SeedRoles()
-        {
-            var roleNames = new string[] { "Admin", "User", "Manager" };
-            foreach (var roleName in roleNames)
-            {
-                var roleExists = await _roleManager.RoleExistsAsync(roleName);
-                if (!roleExists)
-                {
-                    var role = new IdentityRole(roleName);
-                    await _roleManager.CreateAsync(role);
-                }
-            }
-        }
-
         public async Task OnGetAsync(string returnUrl = null)
         {
-            await SeedRoles();
-
             Input = new()
             {
                 Roles = await _roleManager.Roles.Select(r => new SelectListItem

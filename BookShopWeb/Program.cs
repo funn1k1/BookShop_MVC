@@ -1,4 +1,5 @@
 using BookShopWeb.DataAccess.Data;
+using BookShopWeb.DataAccess.DbInitializer;
 using BookShopWeb.DataAccess.Repository;
 using BookShopWeb.DataAccess.Repository.IRepository;
 using BookShopWeb.Models;
@@ -45,11 +46,20 @@ builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Str
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("Smtp"));
 builder.Services.AddScoped<IEmailSender, EmailSender>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 
 var app = builder.Build();
 
 StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe").GetValue<string>("SecretKey");
-
+await SeedDatabase(app);
+async Task SeedDatabase(IApplicationBuilder app)
+{
+    using (var scope = app.ApplicationServices.CreateScope())
+    {
+        var dbInit = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+        await dbInit.Initialize();
+    }
+}
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
