@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Identity;
 
 namespace BookShopWeb.Models
 {
@@ -13,5 +14,8 @@ namespace BookShopWeb.Models
         public string Country { get; set; }
 
         public int PostalCode { get; set; }
+
+        [NotMapped]
+        public string Role { get; set; }
     }
 }
