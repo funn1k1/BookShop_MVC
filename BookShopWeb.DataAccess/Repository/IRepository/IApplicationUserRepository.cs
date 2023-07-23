@@ -9,6 +9,8 @@ namespace BookShopWeb.DataAccess.Repository.IRepository
 
         IdentityRole? GetRole(string? roleId);
 
+        IEnumerable<IdentityRole> GetRoles();
+
         void Update(ApplicationUser user);
     }
 }

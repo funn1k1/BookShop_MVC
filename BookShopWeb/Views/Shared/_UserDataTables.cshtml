@@ -25,7 +25,7 @@
                 },
                 {
                     data: "role",
-                    width: "15%"
+                    width: "5%"
                 },
                 {
                     data: { id: "id", lockoutEnd: "lockoutEnd" },
@@ -36,6 +36,9 @@
                                     <a onclick=unblock("${data.id}") class="btn btn-primary">
                                         <i class="bi bi-unlock-fill"></i> Unblock
                                     </a>
+                                    <a href="/admin/user/rolemanagment?id=${data.id}" class="btn btn-danger">
+                                        Manage Role
+                                    </a>
                                 </div>
                             `;
                         }
@@ -45,11 +48,14 @@
                                     <a onclick=block("${data.id}")  class="btn btn-primary">
                                         <i class="bi bi-lock-fill"></i> Block
                                     </a>
+                                    <a href="/admin/user/rolemanagment?id=${data.id}" class="btn btn-danger">
+                                        Manage Role
+                                    </a>
                                 </div>
                             `
                         }
                     },
-                    width: "20%"
+                    width: "30%"
                 }
             ]
         });

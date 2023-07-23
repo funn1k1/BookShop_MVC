@@ -17,5 +17,8 @@ namespace BookShopWeb.Models
 
         [NotMapped]
         public string Role { get; set; }
+
+        [NotMapped]
+        public string OldRoleId { get; set; }
     }
 }

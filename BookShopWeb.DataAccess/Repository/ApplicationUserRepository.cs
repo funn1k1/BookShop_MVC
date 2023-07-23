@@ -23,6 +23,11 @@ namespace BookShopWeb.DataAccess.Repository
             return roleId;
         }
 
+        public IEnumerable<IdentityRole> GetRoles()
+        {
+            return _db.Roles.ToList();
+        }
+
         public void Update(ApplicationUser user)
         {
             var existingUser = _db.Users.Find(user.Id);

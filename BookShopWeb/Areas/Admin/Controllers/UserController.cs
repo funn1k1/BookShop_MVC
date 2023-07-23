@@ -1,6 +1,10 @@
 ﻿using BookShopWeb.DataAccess.Repository.IRepository;
+using BookShopWeb.Models;
+using BookShopWeb.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BookShopWeb.Areas.Admin.Controllers
 {
@@ -9,10 +13,12 @@ namespace BookShopWeb.Areas.Admin.Controllers
     public class UserController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public UserController(IUnitOfWork unitOfWork)
+        public UserController(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager)
         {
             _unitOfWork = unitOfWork;
+            _userManager = userManager;
         }
 
         public IActionResult Index()
@@ -71,6 +77,64 @@ namespace BookShopWeb.Areas.Admin.Controllers
                 user.Role = role?.Name ?? "No role";
             }
             return Json(new { data = users });
+        }
+
+        public IActionResult RoleManagment(string id)
+        {
+            var user = _unitOfWork.Users.Get(u => u.Id == id);
+            if (user is null)
+            {
+                return NotFound();
+            }
+
+            var roleId = _unitOfWork.Users.GetRoleId(user.Id);
+            if (roleId is not null)
+            {
+                var userRole = _unitOfWork.Users.GetRole(roleId);
+                user.Role = userRole.Name;
+            }
+
+            var userVM = new UserViewModel
+            {
+                User = user,
+                Roles = _unitOfWork.Users.GetRoles().Select(u => new SelectListItem
+                {
+                    Value = u.Name,
+                    Text = u.Name
+                }),
+            };
+            return View(userVM);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RoleManagment(UserViewModel userVM)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+
+            var user = await _userManager.FindByIdAsync(userVM.User.Id);
+            if (user is null)
+            {
+                return NotFound();
+            }
+
+            user.FullName = userVM.User.FullName;
+
+            var roleId = _unitOfWork.Users.GetRoleId(userVM.User.Id);
+            var roleName = _unitOfWork.Users.GetRole(roleId)?.Name;
+            if (roleName is not null && roleName != userVM.User.Role)
+            {
+                await _userManager.RemoveFromRoleAsync(user, roleName);
+                await _userManager.AddToRoleAsync(user, userVM.User.Role);
+
+            }
+
+            _unitOfWork.Users.Update(user);
+            _unitOfWork.Save();
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }
