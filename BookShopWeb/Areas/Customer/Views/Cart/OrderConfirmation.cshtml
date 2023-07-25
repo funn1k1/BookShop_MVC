@@ -52,9 +52,9 @@
                         @foreach (var orderDetail in Model.OrderDetails)
                         {
                             <tr>
-                                <td width="20%">
+                                @*<td width="20%">
                                     <img src="@orderDetail.Book.CoverImageUrl" width="90">
-                                </td>
+                                </td>*@
                                 <td width="60%">
                                     <span class="font-weight-bold">Title: "@orderDetail.Book.Title"</span>
                                     <div class="product-qty">

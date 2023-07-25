@@ -15,19 +15,19 @@
         </div>
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <input asp-for="Book.Id" hidden />
-        <input asp-for="Book.CoverImageUrl" hidden />
+        @*<input asp-for="Book.CoverImageUrl" hidden />*@
         <div class="mb-3">
             <label asp-for="Book.Title"></label>
             <input asp-for="Book.Title" class="form-control" />
             <span asp-validation-for="Book.Title" class="text-danger"></span>
         </div>
-        @if (Model.Book.CoverImageUrl != null)
+        @*@if (Model.Book.CoverImageUrl != null)
         {
             <div class="mb-3">
                 <label asp-for="Book.CoverImageUrl"></label>
                 <img src="@Model.Book.CoverImageUrl" style="display: block; width: 50%;" />
             </div>
-        }
+        }*@
         <div class="mb-3">
             <label asp-for="Book.Author"></label>
             <input asp-for="Book.Author" class="form-control" />

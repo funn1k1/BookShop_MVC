@@ -35,8 +35,8 @@ namespace BookShopWeb.Models
         [DataType(DataType.Date)]
         public DateTime? PublicationDate { get; set; }
 
-        [Display(Name = "Image")]
-        public string? CoverImageUrl { get; set; }
+        //[Display(Name = "Images")]
+        //public string? CoverImageUrl { get; set; }
 
         [Required]
         [Display(Name = "Available Quantity")]

@@ -71,8 +71,8 @@ namespace BookShopWeb.Areas.Admin.Controllers
                 var imageUploadResult = UploadImage(bookVM.File);
                 if (imageUploadResult.Success)
                 {
-                    DeleteOldImage(bookVM.Book.CoverImageUrl);
-                    bookVM.Book.CoverImageUrl = imageUploadResult.ImageUrl;
+                    //DeleteOldImage(bookVM.Book.CoverImageUrl);
+                    //bookVM.Book.CoverImageUrl = imageUploadResult.ImageUrl;
                 }
                 else
                 {
@@ -191,7 +191,7 @@ namespace BookShopWeb.Areas.Admin.Controllers
                 return Json(new { success = false, message = "Error when deleting the book" });
             }
 
-            DeleteOldImage(book.CoverImageUrl);
+            //DeleteOldImage(book.CoverImageUrl);
 
             _unitOfWork.Books.Remove(book);
             _unitOfWork.Save();
