@@ -21,6 +21,8 @@ namespace BookShopWeb.DataAccess.Repository
 
         public IOrderDetailRepository OrderDetails { get; }
 
+        public IBookImageRepository BookImages { get; }
+
         public UnitOfWork(ApplicationDbContext db)
         {
             _db = db;
@@ -31,6 +33,7 @@ namespace BookShopWeb.DataAccess.Repository
             ShoppingCart = new ShoppingCartRepository(db);
             OrderHeaders = new OrderHeaderRepository(db);
             OrderDetails = new OrderDetailRepository(db);
+            BookImages = new BookImageRepository(db);
         }
 
         public void Save()

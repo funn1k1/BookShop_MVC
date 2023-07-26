@@ -16,6 +16,8 @@
 
         IOrderDetailRepository OrderDetails { get; }
 
+        IBookImageRepository BookImages { get; }
+
         void Save();
     }
 }

@@ -22,14 +22,14 @@ namespace BookShopWeb.Areas.Customer.Controllers
 
         public IActionResult Index()
         {
-            var books = _unitOfWork.Books.GetAll(navigationProperties: "Category");
+            var books = _unitOfWork.Books.GetAll(navigationProperties: "Category,BookImages");
             ViewData["Title"] = "Home";
             return View(books);
         }
 
         public IActionResult Details(int? id)
         {
-            var book = _unitOfWork.Books.Get(b => b.Id == id, navigationProperties: "Category");
+            var book = _unitOfWork.Books.Get(b => b.Id == id, navigationProperties: "Category,BookImages");
             if (book is null)
             {
                 return NotFound();

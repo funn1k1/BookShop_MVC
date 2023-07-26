@@ -49,7 +49,6 @@ namespace BookShopWeb.DataAccess.Data
                     ListPrice = 47.50M,
                     DiscountedPrice = null,
                     PublicationDate = new DateTime(2023, 6, 30),
-                    //CoverImageUrl = "https://m.media-amazon.com/images/I/411LNpmcEnL._SX260_.jpg",
                     AvailableQuantity = 100,
                     CategoryId = 2
                 },
@@ -63,7 +62,6 @@ namespace BookShopWeb.DataAccess.Data
                     ListPrice = 38.99M,
                     DiscountedPrice = null,
                     PublicationDate = new DateTime(2023, 3, 17),
-                    //CoverImageUrl = "https://m.media-amazon.com/images/I/41iLDz74c-L._SX397_BO1,204,203,200_.jpg",
                     AvailableQuantity = 100,
                     CategoryId = 2
                 },
@@ -77,7 +75,6 @@ namespace BookShopWeb.DataAccess.Data
                     ListPrice = 60.49M,
                     DiscountedPrice = null,
                     PublicationDate = new DateTime(2023, 3, 18),
-                    //CoverImageUrl = "https://d374oxlv7wyffd.cloudfront.net/B0977Z1DHC/f2ea5a9a/cover.jpeg",
                     AvailableQuantity = 100,
                     CategoryId = 2,
                 },
@@ -91,12 +88,40 @@ namespace BookShopWeb.DataAccess.Data
                     ListPrice = 20M,
                     DiscountedPrice = null,
                     PublicationDate = new DateTime(2023, 6, 16),
-                    //CoverImageUrl = "https://m.media-amazon.com/images/I/41LqtW3+6iL._SX327_BO1,204,203,200_.jpg",
                     AvailableQuantity = 100,
                     CategoryId = 3,
                 },
             };
             modelBuilder.Entity<Book>().HasData(books);
+
+            var bookImages = new List<BookImage>
+            {
+                new()
+                {
+                    Id = 1,
+                    BookId = 1,
+                    CoverImageUrl = "https://m.media-amazon.com/images/I/411LNpmcEnL._SX260_.jpg"
+                },
+                new()
+                {
+                    Id = 2,
+                    BookId = 2,
+                    CoverImageUrl = "https://m.media-amazon.com/images/I/41iLDz74c-L._SX397_BO1,204,203,200_.jpg"
+                },
+                new()
+                {
+                    Id = 3,
+                    BookId = 3,
+                    CoverImageUrl = "https://m.media-amazon.com/images/I/41ZzfjIpi0L._SX397_BO1,204,203,200_.jpg"
+                },
+                new()
+                {
+                    Id = 4,
+                    BookId = 4,
+                    CoverImageUrl = "https://m.media-amazon.com/images/I/41LqtW3+6iL._SX327_BO1,204,203,200_.jpg"
+                }
+            };
+            modelBuilder.Entity<BookImage>().HasData(bookImages);
 
             var companies = new Company[]
             {

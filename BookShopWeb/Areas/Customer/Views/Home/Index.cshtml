@@ -1,23 +1,30 @@
 ﻿@model IEnumerable<Book>
 
 <div class="row pb-3">
-    @foreach (var product in Model)
+    @foreach (var book in Model)
     {
         <div class="col-lg-3 col-sm-6">
             <div class="card border-5 p-3 shadow rounded h-100">
-                @*<img src="@product.CoverImageUrl" class="object-fit-cover rounded h-100"/>*@
+                @{
+                    var firstImageUrl = book.BookImages?.FirstOrDefault(b => b.BookId == book.Id)?.CoverImageUrl;
+                }
+                @if (!string.IsNullOrEmpty(firstImageUrl))
+                {
+                    <img src="@firstImageUrl" class="object-fit-cover rounded h-100" />
+                }
+
                 <div class="card-body">
-                    <h5 class="card-title text-dark opacity-75 text-center">@product.Title</h5>
-                    <h5 class="card-title text-success text-center">by <b>@product.Author</b></h5>
+                    <h5 class="card-title text-dark opacity-75 text-center">@book.Title</h5>
+                    <h5 class="card-title text-success text-center">by <b>@book.Author</b></h5>
                     <p class="text-center text-dark text-opacity-75">
                         List Price:
                         <span>
-                            @product.ListPrice.ToString("c")
+                            @book.ListPrice.ToString("c")
                         </span>
                     </p>
                 </div>
                 <div>
-                    <a asp-action="Details" asp-route-id="@product.Id" class="btn btn-primary bg-gradient border-0 w-100">Details</a>
+                    <a asp-action="Details" asp-route-id="@book.Id" class="btn btn-primary bg-gradient border-0 w-100">Details</a>
                 </div>
             </div>
         </div>

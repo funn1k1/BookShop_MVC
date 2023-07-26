@@ -65,3 +65,8 @@ body {
 .font-weight-semibold {
     font-weight: 600 !important;
 }
+
+.carousel-control-next,
+.carousel-control-prev /*, .carousel-indicators */ {
+    filter: invert(100%);
+}

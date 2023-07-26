@@ -41,12 +41,15 @@ namespace BookShopWeb.Areas.Admin.Controllers
 
             if (id is null)
             {
-                bookVM.Book = new Book();
+                bookVM.Book = new Book
+                {
+                    BookImages = new List<BookImage>()
+                };
                 return View(bookVM);
             }
             else
             {
-                var book = _unitOfWork.Books.Get(c => c.Id == id, "Category");
+                var book = _unitOfWork.Books.Get(c => c.Id == id, "Category,BookImages");
                 if (book is null)
                 {
                     return NotFound();
@@ -61,18 +64,37 @@ namespace BookShopWeb.Areas.Admin.Controllers
         [HttpPost]
         public IActionResult Upsert(BookViewModel bookVM)
         {
+            bookVM.CategoryList = _unitOfWork.Categories.GetAll()
+                .Select(c => new SelectListItem
+                {
+                    Value = c.Id.ToString(),
+                    Text = c.Name
+                });
+
             if (!ModelState.IsValid)
             {
-                return View();
+                return View(bookVM);
             }
 
-            if (bookVM.File is not null)
+            if (bookVM.Files is not null)
             {
-                var imageUploadResult = UploadImage(bookVM.File);
+                var imageUploadResult = UploadImages(bookVM.Files, bookVM.Book);
                 if (imageUploadResult.Success)
                 {
-                    //DeleteOldImage(bookVM.Book.CoverImageUrl);
-                    //bookVM.Book.CoverImageUrl = imageUploadResult.ImageUrl;
+                    bool isNewBook = bookVM.Book.Id == 0;
+
+                    if (isNewBook)
+                    {
+                        _unitOfWork.Books.Add(bookVM.Book);
+                    }
+                    else
+                    {
+                        _unitOfWork.Books.Update(bookVM.Book);
+                    }
+
+                    _unitOfWork.Save();
+
+                    TempData["Success"] = isNewBook ? "Book created successfully" : "Book edited successfully";
                 }
                 else
                 {
@@ -80,46 +102,52 @@ namespace BookShopWeb.Areas.Admin.Controllers
                 }
             }
 
-            bool isNewBook = bookVM.Book.Id == 0;
 
-            if (isNewBook)
-            {
-                _unitOfWork.Books.Add(bookVM.Book);
-            }
-            else
-            {
-                _unitOfWork.Books.Update(bookVM.Book);
-            }
-
-            _unitOfWork.Save();
-
-            TempData["Success"] = isNewBook ? "Book created successfully" : "Book edited successfully";
             return RedirectToAction(nameof(Index));
         }
 
-        private ImageUploadResult UploadImage(IFormFile file)
+        private ImageUploadResult UploadImages(IEnumerable<IFormFile> files, Book book)
         {
-            if (file is null || file.Length == 0)
+            if (files is null || files.Count() == 0)
             {
                 return new ImageUploadResult(false, errorMessage: "No image file provided");
             }
 
-            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-            var imageUrl = Path.Combine("images", "books", fileName);
-            var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, imageUrl);
-
             try
             {
-                using (var stream = new FileStream(imagePath, FileMode.Create))
+                book.BookImages = new List<BookImage>();
+                foreach (var file in files)
                 {
-                    file.CopyTo(stream);
+                    var directoryUrl = Path.Combine("images", "books", $"book-{book.Id}");
+                    var directoryPath = Path.Combine(_webHostEnvironment.WebRootPath, directoryUrl);
+                    if (!Directory.Exists(directoryPath))
+                    {
+                        Directory.CreateDirectory(directoryPath);
+                    }
+
+                    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                    var imageUrl = Path.Combine(directoryUrl, fileName);
+                    var imagePath = Path.Combine(_webHostEnvironment.WebRootPath, imageUrl);
+
+                    using (var fs = new FileStream(imagePath, FileMode.Create))
+                    {
+                        file.CopyTo(fs);
+                    }
+
+                    var bookImage = new BookImage
+                    {
+                        CoverImageUrl = $@"\{imageUrl}",
+                        BookId = book.Id,
+                    };
+                    book.BookImages.Add(bookImage);
                 }
 
-                return new ImageUploadResult(true, imageUrl: $@"\{imageUrl}");
+                return new ImageUploadResult(true);
             }
+
             catch (Exception ex)
             {
-                return new ImageUploadResult(false, errorMessage: $"Error uploading image: {ex.Message}");
+                return new ImageUploadResult(false, errorMessage: $"Error uploading images: {ex.Message}");
             }
         }
 
@@ -182,16 +210,36 @@ namespace BookShopWeb.Areas.Admin.Controllers
             return Json(new { data = products });
         }
 
+        [HttpPost]
+        public IActionResult DeleteImage(int id)
+        {
+            var bookImage = _unitOfWork.BookImages.Get(b => b.Id == id);
+            if (bookImage is null)
+            {
+                return NotFound();
+            }
+
+            DeleteOldImage(bookImage.CoverImageUrl);
+
+            _unitOfWork.BookImages.Remove(bookImage);
+            _unitOfWork.Save();
+
+            return RedirectToAction(nameof(Upsert), new { id = bookImage.BookId });
+        }
+
         [HttpDelete]
         public IActionResult Delete(int? id)
         {
-            var book = _unitOfWork.Books.Get(b => b.Id == id);
+            var book = _unitOfWork.Books.Get(b => b.Id == id, "BookImages");
             if (book is null)
             {
                 return Json(new { success = false, message = "Error when deleting the book" });
             }
 
-            //DeleteOldImage(book.CoverImageUrl);
+            foreach (var bookImage in book.BookImages)
+            {
+                DeleteOldImage(bookImage.CoverImageUrl);
+            }
 
             _unitOfWork.Books.Remove(book);
             _unitOfWork.Save();
@@ -205,14 +253,12 @@ class ImageUploadResult
 {
     public bool Success { get; }
 
-    public string? ImageUrl { get; }
-
     public string? ErrorMessage { get; }
 
-    public ImageUploadResult(bool success, string? imageUrl = null, string? errorMessage = null)
+    public ImageUploadResult(bool success, string? errorMessage = null)
     {
         Success = success;
-        ImageUrl = imageUrl;
+
         ErrorMessage = errorMessage;
     }
 }
