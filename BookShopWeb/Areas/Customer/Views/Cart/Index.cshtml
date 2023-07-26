@@ -12,7 +12,13 @@
                         <div class="col-lg-5">
                             <div class="me-lg-5">
                                 <div class="d-flex">
-                                    @*<img src="@cart.Book.CoverImageUrl" class="border rounded me-3" style="width: 96px; height: 96px;">*@
+                                    @{
+                                        var firstImageUrl = cart.Book.BookImages?.FirstOrDefault(b => b.BookId == cart.BookId)?.CoverImageUrl;
+                                    }
+                                    @if (!string.IsNullOrEmpty(firstImageUrl))
+                                    {
+                                        <img src="@firstImageUrl" class="border rounded me-3" style="width: 96px; height: 96px;">
+                                    }
                                     <div class="">
                                         <a href="#" class="nav-link">@cart.Book.Title</a>
                                         <p class="text-muted">@cart.Book.Category.Name</p>

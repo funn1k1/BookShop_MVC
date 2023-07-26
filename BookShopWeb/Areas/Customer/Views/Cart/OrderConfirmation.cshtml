@@ -52,9 +52,15 @@
                         @foreach (var orderDetail in Model.OrderDetails)
                         {
                             <tr>
-                                @*<td width="20%">
-                                    <img src="@orderDetail.Book.CoverImageUrl" width="90">
-                                </td>*@
+                                <td width="20%">
+                                    @{
+                                        var firstImageUrl = orderDetail.Book.BookImages?.FirstOrDefault(b => b.BookId == orderDetail.BookId)?.CoverImageUrl;
+                                    }
+                                    @if (!string.IsNullOrEmpty(firstImageUrl))
+                                    {
+                                        <img src="@firstImageUrl" class="border rounded me-3" style="width: 96px; height: 96px;">
+                                    }
+                                </td>
                                 <td width="60%">
                                     <span class="font-weight-bold">Title: "@orderDetail.Book.Title"</span>
                                     <div class="product-qty">

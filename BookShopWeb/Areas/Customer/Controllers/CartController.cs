@@ -25,7 +25,7 @@ namespace BookShopWeb.Areas.Customer.Controllers
 
         public IActionResult Index(string userId)
         {
-            var shoppingCarts = _unitOfWork.ShoppingCart.GetAll(c => c.ApplicationUserId == userId, "Book,Book.Category");
+            var shoppingCarts = _unitOfWork.ShoppingCart.GetAll(c => c.ApplicationUserId == userId, "Book,Book.Category,Book.BookImages");
 
             foreach (var shoppingCart in shoppingCarts)
             {
@@ -209,7 +209,7 @@ namespace BookShopWeb.Areas.Customer.Controllers
                 return NotFound();
             }
 
-            var orderDetails = _unitOfWork.OrderDetails.GetAll(o => o.OrderHeaderId == orderHeader.Id, "Book,Book.Category");
+            var orderDetails = _unitOfWork.OrderDetails.GetAll(o => o.OrderHeaderId == orderHeader.Id, "Book,Book.Category,Book.BookImages");
             if (!orderDetails.Any())
             {
                 return NotFound();
