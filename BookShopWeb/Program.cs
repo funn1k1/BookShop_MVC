@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
-
+var configuration = builder.Configuration;
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 // Set database connection
@@ -34,11 +34,34 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
-builder.Services.AddAuthentication().AddFacebook(options =>
-{
-    options.AppId = "578634384427891";
-    options.AppSecret = "cd86bee81824bcead0a05575a1927f26";
-});
+
+// Authentication services
+builder.Services.AddAuthentication()
+    .AddFacebook(facebookOptions =>
+    {
+        facebookOptions.AppId = configuration["Authentication:Facebook:AppId"];
+        facebookOptions.AppSecret = configuration["Authentication:Facebook:AppSecret"];
+    })
+    .AddGoogle(googleOptions =>
+    {
+        googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
+        googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"]; ;
+    })
+    .AddMicrosoftAccount(microsoftOptions =>
+    {
+        microsoftOptions.ClientId = configuration["Authentication:Microsoft:ClientId"];
+        microsoftOptions.ClientSecret = configuration["Authentication:Microsoft:ClientSecret"]; ;
+    })
+    .AddTwitter(twitterOptions =>
+    {
+        twitterOptions.ConsumerKey = configuration["Authentication:Twitter:ConsumerKey"];
+        twitterOptions.ConsumerSecret = configuration["Authentication:Twitter:ConsumerSecret"];
+    })
+    .AddGitHub(githubOptions =>
+    {
+        githubOptions.ClientId = configuration["Authentication:Github:ClientId"];
+        githubOptions.ClientSecret = configuration["Authentication:Github:ClientSecret"];
+    });
 
 builder.Services.AddRazorPages();
 
