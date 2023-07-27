@@ -26,9 +26,9 @@
                         @{
                             var images = Model.Book.BookImages;
                         }
-                        @if (images.Count > 0)
-                        {
-                            <div class="mb-3 rounded">
+                        <div class="mb-3 rounded">
+                            @if (images.Count > 0)
+                            {
                                 <div id="carouselExampleIndicators" class="carousel slide">
                                     <div class="carousel-indicators top-0">
                                         @for (int i = 0; i < images.Count(); i++)
@@ -55,8 +55,12 @@
                                         <span class="visually-hidden">Next</span>
                                     </button>
                                 </div>
-                            </div>
-                        }
+                            }
+                            else
+                            {
+                                <img src="" class="d-block mx-auto" alt="No image">
+                            }
+                        </div>
                     </div>
                     <div class="col-12 col-lg-6 offset-lg-1">
                         <div class="col-12 col-md-6 pb-4">

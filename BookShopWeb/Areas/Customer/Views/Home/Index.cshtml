@@ -3,7 +3,7 @@
 <div class="row pb-3">
     @foreach (var book in Model)
     {
-        <div class="col-lg-3 col-sm-6">
+        <div class="col-lg-3 col-sm-6 mb-3">
             <div class="card border-5 p-3 shadow rounded h-100">
                 @{
                     var firstImageUrl = book.BookImages?.FirstOrDefault(b => b.BookId == book.Id)?.CoverImageUrl;
@@ -11,6 +11,10 @@
                 @if (!string.IsNullOrEmpty(firstImageUrl))
                 {
                     <img src="@firstImageUrl" class="object-fit-cover rounded h-100" />
+                }
+                else
+                {
+                    <img src="" class="object-fit-cover rounded h-100" alt="No Image"/>
                 }
 
                 <div class="card-body">

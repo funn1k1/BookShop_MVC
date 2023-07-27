@@ -81,20 +81,7 @@ namespace BookShopWeb.Areas.Admin.Controllers
                 var imageUploadResult = UploadImages(bookVM.Files, bookVM.Book);
                 if (imageUploadResult.Success)
                 {
-                    bool isNewBook = bookVM.Book.Id == 0;
-
-                    if (isNewBook)
-                    {
-                        _unitOfWork.Books.Add(bookVM.Book);
-                    }
-                    else
-                    {
-                        _unitOfWork.Books.Update(bookVM.Book);
-                    }
-
-                    _unitOfWork.Save();
-
-                    TempData["Success"] = isNewBook ? "Book created successfully" : "Book edited successfully";
+                    TempData["Success"] = bookVM.Book.Id == 0 ? "Book created successfully" : "Book edited successfully";
                 }
                 else
                 {
@@ -102,6 +89,17 @@ namespace BookShopWeb.Areas.Admin.Controllers
                 }
             }
 
+            bool isNewBook = bookVM.Book.Id == 0;
+            if (isNewBook)
+            {
+                _unitOfWork.Books.Add(bookVM.Book);
+            }
+            else
+            {
+                _unitOfWork.Books.Update(bookVM.Book);
+            }
+
+            _unitOfWork.Save();
 
             return RedirectToAction(nameof(Index));
         }
